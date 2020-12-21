@@ -5,7 +5,7 @@ import java.util.Arrays;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import twitch.hunsterverse.net.twitch.chatbot.features.TwitchAPI;
+import twitch.hunsterverse.net.twitch.features.TwitchAPI;
 
 public class DiscordCommandIsLive extends Command {
 

@@ -16,17 +16,18 @@ bot:
 # Application - API Settings
 api:
     # Discord Application Client Id
-    discord_client_id: 
+    discord_client_id: 790342807763681331
 
     # Discord Application Client Token
-    discord_client_token: 
+    discord_client_token: NzkwMzQyODA3NzYzNjgxMzMx.X9_OGQ.V-CMvtDLV_4_GuzMp2lO0ZsYHVQ
 
 # Channels - The bot will connect to all listed channels
 
-owner_id: 
+owner_id: 292400490623270914
 
 co_owner_ids:
-   - 
+   - 223690437389451265
 
 channels:
-    - 
+    - EclipsesKnight
+    - The_Origin_Hunters

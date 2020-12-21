@@ -16,16 +16,17 @@ bot:
 # Application - API Settings
 api:
     # Twitch Application Client Id (You can get it here: https://twitchtokengenerator.com/)
-    twitch_client_id: 
+    twitch_client_id: gp762nuuoqcoxypju8c569th9wz7q5
 
     # Twitch Application Client Secret (You can get it here: https://twitchtokengenerator.com/)
-    twitch_client_secret: 
+    twitch_client_secret: vr4pg4t0wptcbqhklsptnzgw5ah8hr
 
 # Credentials
 credentials:
     # OAuth Token for IRC User (You can get yours here: http://twitchapps.com/tmi/)
-    irc: 
+    irc: 9f79sue856dfoikxv9448a0mcumiag
 
 # Channels - The bot will connect to all listed channels
 channels:
-    - 
+    - EclipsesKnight
+    - The_Origin_Hunters

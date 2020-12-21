@@ -1,7 +1,7 @@
 package twitch.hunsterverse.net;
 
 import twitch.hunsterverse.net.discord.DiscordBot;
-import twitch.hunsterverse.net.twitch.chatbot.TwitchBot;
+import twitch.hunsterverse.net.twitch.TwitchBot;
 
 public class Launcher {
 	
