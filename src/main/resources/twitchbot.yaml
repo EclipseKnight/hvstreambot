@@ -1,0 +1,31 @@
+########################################################################################
+#                                                                                      #
+#      This is the configuration for the Twitch API portion of the application.        #
+#      Read and input the apropriate information.                                      #
+#                                                                                      #
+########################################################################################
+
+debug: false
+bot:
+    # Name of your bot
+    name: HVStreamBot
+
+    # Current version of your bot
+    version: 0.1
+
+# Application - API Settings
+api:
+    # Twitch Application Client Id (You can get it here: https://twitchtokengenerator.com/)
+    twitch_client_id: 
+
+    # Twitch Application Client Secret (You can get it here: https://twitchtokengenerator.com/)
+    twitch_client_secret: 
+
+# Credentials
+credentials:
+    # OAuth Token for IRC User (You can get yours here: http://twitchapps.com/tmi/)
+    irc: 
+
+# Channels - The bot will connect to all listed channels
+channels:
+    - 
