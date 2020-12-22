@@ -31,3 +31,12 @@ co_owner_ids:
 channels:
     - EclipsesKnight
     - The_Origin_Hunters
+
+features:
+   #!c islive
+   discord_command_is_live: 
+      enabled: true
+      name: islive
+      channels:
+         - 746380974048411651
+          

@@ -28,5 +28,19 @@ credentials:
 
 # Channels - The bot will connect to all listed channels
 channels:
-    - EclipsesKnight
-    - The_Origin_Hunters
+   - EclipsesKnight
+   - The_Origin_Hunters
+    
+#Listener Channels - all of the channels the bot will listen to for fired events (go live, offline, follows, etc)
+listener_channels:
+   - EclipsesKnight
+   - The_Origin_Hunters
+   
+features:
+   twitch_command_is_live:
+      enabled: true
+      mod_only: false
+      name: islive
+      channels: 
+         - EclipsesKnight
+
