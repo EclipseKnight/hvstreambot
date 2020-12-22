@@ -26,7 +26,6 @@ credentials:
     # OAuth Token for IRC User (You can get yours here: http://twitchapps.com/tmi/)
     irc: 
 
-# Channels - The bot will connect to all listed channels
 # Channels - The bot will connect to all listed channels. (needed for message events).
 channels:
    - EclipsesKnight
