@@ -15,7 +15,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Activity.ActivityType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import twitch.hunsterverse.net.discord.commands.DiscordCommandConfiguration;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandIsLive;
+import twitch.hunsterverse.net.discord.commands.DiscordCommandRestart;
 
 public class DiscordBot {
 
@@ -38,6 +40,7 @@ public class DiscordBot {
 	 * intents of the discord bot
 	 */
 	private ArrayList<GatewayIntent> intents = new ArrayList<>();
+	
 	
 	public DiscordBot() {
 		// Load Configuration
@@ -74,12 +77,16 @@ public class DiscordBot {
 		registerCommands(builder);
 		
 		jda.getPresence().setActivity(Activity.of(ActivityType.DEFAULT, "Streamers \"Live\": 0 streamer(s)"));
+		
 	}
 	
 	
 	
 	private void registerCommands(CommandClientBuilder builder) {
 		// adds command to builder
+		
+		builder.addCommand(new DiscordCommandConfiguration());
+		builder.addCommand(new DiscordCommandRestart());
 		builder.addCommand(new DiscordCommandIsLive());
 		
 		// built command client
@@ -92,7 +99,7 @@ public class DiscordBot {
 	/**
      * Load the Configuration
      */
-    private void loadConfiguration() {
+    public static void loadConfiguration() {
         try {
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             InputStream is = classloader.getResourceAsStream("discordbot.yaml");

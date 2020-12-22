@@ -10,6 +10,8 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 
 import twitch.hunsterverse.net.twitch.features.ChannelCommandHandler;
+import twitch.hunsterverse.net.twitch.features.ChannelOnGoLive;
+import twitch.hunsterverse.net.twitch.features.ChannelOnGoOffline;
 import twitch.hunsterverse.net.twitch.features.WriteChannelChatToConsole;
 
 public class TwitchBot {
@@ -84,12 +86,16 @@ public class TwitchBot {
         // Register Event-based features
 		WriteChannelChatToConsole writeChannelChatToConsole = new WriteChannelChatToConsole(eventHandler);
 		ChannelCommandHandler channelCommandHandler = new ChannelCommandHandler(eventHandler);
+		ChannelOnGoLive channelOnGoLive = new ChannelOnGoLive(eventHandler);
+		ChannelOnGoOffline channelOnGoOffline = new ChannelOnGoOffline(eventHandler);
+		
+		twitchClient.getClientHelper().enableStreamEventListener(configuration.getListenerChannels());
     }
 
     /**
      * Load the Configuration
      */
-    private void loadConfiguration() {
+    public static void loadConfiguration() {
         try {
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             InputStream is = classloader.getResourceAsStream("twitchbot.yaml");

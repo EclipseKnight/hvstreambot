@@ -6,6 +6,9 @@ import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 
 import twitch.hunsterverse.net.twitch.TwitchBot;
+import twitch.hunsterverse.net.twitch.features.commands.TwitchCommandConfiguration;
+import twitch.hunsterverse.net.twitch.features.commands.TwitchCommandIsLive;
+import twitch.hunsterverse.net.twitch.features.commands.TwitchCommandRestart;
 
 public class ChannelCommandHandler {
 
@@ -16,34 +19,45 @@ public class ChannelCommandHandler {
 	public void onChannelMessage(ChannelMessageEvent event) {
 		String msg = event.getMessage().toLowerCase();
 		
-		/*
-		 * check if message is a command attempt. 
-		 */
+		// check if message is a command attempt. 
 		if(event.getMessage().startsWith("!c ")) {
 
-			/*
-			 * Get the arguments.
-			 */
+			
+			// Get the arguments. 
 			String[] args = msg.substring(msg.indexOf("!c")+3).split("\\s+");
+			
+			
 			/*
-			 * First argument is always the command name.
+			 * Because Switch cases can't use non-constant values. I had to go with the less clean if (argument equals command name) approach. 		
+			 */
+			
+			String cmdConfiguration = "config";
+			String cmdRestart = "restart";
+			String cmdIsLive = TwitchBot.configuration.getFeatures().get("twitch_command_is_live").getName();
+			
+			
+			/*
+			 * First argument (args[0]) is always the command name.
 			 * So check what command is being used. 
 			 */
-			System.out.println(Arrays.toString(args));
 			
-			String cmd = switch (args[0]) {
-				case "islive" -> { 
-					if (args.length > 1) {
-						yield Arrays.toString(TwitchAPI.isLive(Arrays.asList(Arrays.copyOfRange(args, 1, args.length))));
-					}  else {
-						yield String.valueOf(TwitchAPI.isLive(args[1])); 
-					}
-				}
-				
-				default -> throw new IllegalArgumentException("Unexpected value: " + args[0]);
-			};
-			System.out.println("Command results: " + cmd);
-			TwitchBot.twitchClient.getChat().sendMessage(event.getChannel().getName(), "Command results: " + cmd);
+			if (args[0].equals(cmdConfiguration)) {
+				TwitchCommandConfiguration.execute(event);
+				return;
+			}
+			
+			if (args[0].equals(cmdRestart)) {
+				TwitchCommandRestart.execute(event);
+				return;
+			}
+			
+			if (args[0].equalsIgnoreCase(cmdIsLive)) {
+				TwitchCommandIsLive.execute(event);
+				return;
+			}
+			
+			
+			
 		}
 	}
 }

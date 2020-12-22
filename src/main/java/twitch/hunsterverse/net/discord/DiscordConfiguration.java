@@ -20,6 +20,8 @@ public class DiscordConfiguration {
 	private List<String> coOwnerIds;
 
 	private List<String> channels;
+	
+	private Map<String, DiscordFeature> features;
 
 	public Map<String, String> getBot() {
 		return bot;
@@ -56,9 +58,33 @@ public class DiscordConfiguration {
 	public void setChannels(List<String> channels) {
 		this.channels = channels;
 	}
+	
+	public Map<String, DiscordFeature> getFeatures() {
+		return features;
+	}
+	
+	public void setFeatures(Map<String, DiscordFeature> features) {
+		this.features = features;
+		
+	}
+	
 
 	@Override
 	public String toString() {
-		return "Configuration{" + "bot=" + bot + ", api=" + api + ", channels=" + channels + '}';
+		return String.format("""
+				Configuration:
+					bot = %s
+					owner_id = %s,
+					co_owner_ids = %s,
+					channels = %s,
+					features:
+						discord_command_is_live:
+					 		enabled = %s,
+					 		name = %s,
+					 		channels = %s
+				""", bot, ownerId, coOwnerIds, channels,
+				features.get("discord_command_is_live").isEnabled(),
+				features.get("discord_command_is_live").getName(),
+				features.get("discord_command_is_live").getChannels());
 	}
 }

@@ -20,6 +20,10 @@ public class TwitchConfiguration {
     private Map<String, String> credentials;
 
     private List<String> channels;
+    
+    private List<String> listenerChannels;
+    
+    private Map<String, TwitchFeature> features;
 
     public Boolean getDebug() {
         return debug;
@@ -60,14 +64,40 @@ public class TwitchConfiguration {
     public void setChannels(List<String> channels) {
         this.channels = channels;
     }
-
-    @Override
-    public String toString() {
-        return "Configuration{" +
-                "bot=" + bot +
-                ", api=" + api +
-                ", credentials=" + credentials +
-                ", channels=" + channels +
-                '}';
+    
+    public List<String> getListenerChannels() {
+    	return listenerChannels;
     }
+    
+    public void setListenerChannels(List<String> listenerChannels) {
+    	this.listenerChannels = listenerChannels;
+    }
+    
+    public Map<String, TwitchFeature> getFeatures() {
+		return features;
+	}
+
+    public void setFeatures(Map<String, TwitchFeature> features) {
+		this.features = features;
+	}
+    
+    @Override
+	public String toString() {
+		return String.format("""
+				Configuration:
+					bot = %s
+					channels = %s,
+					listener_channels = %s
+					features:
+						discord_command_is_live:
+					 		enabled = %s,
+					 		mod_only = %s
+					 		name = %s,
+					 		channels = %s
+				""", bot, channels, listenerChannels,
+				features.get("twitch_command_is_live").isEnabled(),
+				features.get("twitch_command_is_live").isModOnly(),
+				features.get("twitch_command_is_live").getName(),
+				features.get("twitch_command_is_live").getChannels());
+	}
 }

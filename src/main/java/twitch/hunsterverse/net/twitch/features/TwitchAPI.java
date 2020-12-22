@@ -4,6 +4,7 @@ package twitch.hunsterverse.net.twitch.features;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.helix.domain.StreamList;
 
 import twitch.hunsterverse.net.twitch.TwitchBot;
@@ -58,5 +59,15 @@ public class TwitchAPI {
 		
 		return resultList;
 		
+	}
+	
+	
+	/**
+	 * Utility method to make sending twitch messages cleaner since the library currently has no quick reply method like JDA.
+	 * @param event
+	 * @param message
+	 */
+	public static void sendMessage(ChannelMessageEvent event, String message) {
+		event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
 	}
 }
