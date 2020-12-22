@@ -1,7 +1,5 @@
 package twitch.hunsterverse.net.twitch.features;
 
-import java.util.Arrays;
-
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 
