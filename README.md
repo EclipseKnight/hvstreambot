@@ -1,0 +1,2 @@
+# hvstreambot
+HunsterVerse Stream Bot
