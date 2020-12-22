@@ -113,6 +113,7 @@ public class TwitchBot {
         // Connect to all channels
         for (String channel : configuration.getChannels()) {
             twitchClient.getChat().joinChannel(channel);
+            twitchClient.getChat().sendMessage(channel, "Twitch bot is started.");
         }
     }
 
