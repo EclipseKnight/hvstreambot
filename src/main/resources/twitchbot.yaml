@@ -27,6 +27,7 @@ credentials:
     irc: 
 
 # Channels - The bot will connect to all listed channels
+# Channels - The bot will connect to all listed channels. (needed for message events).
 channels:
    - EclipsesKnight
    - The_Origin_Hunters
