@@ -9,10 +9,10 @@ import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 
-import twitch.hunsterverse.net.twitch.features.ChannelCommandHandler;
 import twitch.hunsterverse.net.twitch.features.ChannelOnGoLive;
 import twitch.hunsterverse.net.twitch.features.ChannelOnGoOffline;
 import twitch.hunsterverse.net.twitch.features.WriteChannelChatToConsole;
+import twitch.hunsterverse.net.twitch.features.commands.ChannelCommandHandler;
 
 public class TwitchBot {
 

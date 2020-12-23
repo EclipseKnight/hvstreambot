@@ -1,12 +1,9 @@
-package twitch.hunsterverse.net.twitch.features;
+package twitch.hunsterverse.net.twitch.features.commands;
 
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 
 import twitch.hunsterverse.net.twitch.TwitchBot;
-import twitch.hunsterverse.net.twitch.features.commands.TwitchCommandConfiguration;
-import twitch.hunsterverse.net.twitch.features.commands.TwitchCommandIsLive;
-import twitch.hunsterverse.net.twitch.features.commands.TwitchCommandRestart;
 
 public class ChannelCommandHandler {
 
