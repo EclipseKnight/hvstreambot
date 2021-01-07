@@ -21,17 +21,18 @@ api:
     # Discord Application Client Token
     discord_client_token: 
 
-# Channels - The bot will connect to all listed channels
+
 
 owner_id: 
 
 co_owner_ids:
    - 
 
+# Channels - The bot will connect to all listed channels
 channels:
-    - EclipsesKnight
-    - The_Origin_Hunters
-
+   - EclipsesKnight
+   - The_Origin_Hunters
+    
 features:
    #!c islive
    discord_command_is_live: 
@@ -39,4 +40,5 @@ features:
       name: islive
       channels:
          - 746380974048411651
-          
+      
+   

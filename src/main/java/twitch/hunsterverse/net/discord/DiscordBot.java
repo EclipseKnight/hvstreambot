@@ -1,6 +1,13 @@
 package twitch.hunsterverse.net.discord;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.security.auth.login.LoginException;
@@ -15,9 +22,12 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Activity.ActivityType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandConfiguration;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandIsLive;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandRestart;
+import twitch.hunsterverse.net.logger.Logger;
+import twitch.hunsterverse.net.logger.Logger.Level;
 
 public class DiscordBot {
 
@@ -96,20 +106,55 @@ public class DiscordBot {
 		jda.addEventListener(cmdClient);
 	}
 	
-	/**
+	 /**
      * Load the Configuration
      */
     public static void loadConfiguration() {
-        try {
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream is = classloader.getResourceAsStream("discordbot.yaml");
-
+    	
+    	
+    	File twitchBotConfig = new File(Launcher.configPath + File.separator + "configs" + File.separator + "discordbot.yaml");
+    	
+    	if (new File(Launcher.configPath + File.separator + "configs").mkdir()) {
+    		Logger.log(Level.WARN, "Generating configs directory...");
+    	}
+    	
+    	try {
+    		
+    		if (!twitchBotConfig.exists()) {
+        		generateConfig();
+        	}
+        	
+            InputStream is = new BufferedInputStream(new FileInputStream(twitchBotConfig));
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             configuration = mapper.readValue(is, DiscordConfiguration.class);
+            
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.out.println("Unable to load Configuration ... Exiting.");
+            Logger.log(Level.FATAL, "Unable to load configuration... Exiting.");
             System.exit(1);
         }
+    	
+    }
+    
+    /**
+     * Generates config file.
+     */
+    public static void generateConfig() {
+    	
+        try {
+        	Logger.log(Level.WARN, "Missing discordbot.yaml. Generating new config...");
+        	ClassLoader classloader = DiscordBot.class.getClassLoader();
+        	
+        	// copies twitchbot.yaml template to current working directory.
+        	InputStream original = classloader.getResourceAsStream("discordbot.yaml");
+            Path copy = Paths.get(new File(Launcher.configPath + File.separator + "configs" + File.separator + "discordbot.yaml").toURI());
+          
+            Logger.log(Level.WARN, "Generating config at " + copy);
+            Files.copy(original, copy);
+            
+		} catch (IOException e) {
+			e.printStackTrace();
+			Logger.log(Level.ERROR, "Failed to generate discordbot.yaml...");
+		}
     }
 }

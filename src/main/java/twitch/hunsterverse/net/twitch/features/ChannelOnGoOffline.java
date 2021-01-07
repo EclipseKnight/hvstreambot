@@ -3,6 +3,9 @@ package twitch.hunsterverse.net.twitch.features;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
+import twitch.hunsterverse.net.logger.Logger;
+import twitch.hunsterverse.net.logger.Logger.Level;
+
 public class ChannelOnGoOffline {
 
 	public ChannelOnGoOffline(SimpleEventHandler eventHandler) {
@@ -11,7 +14,7 @@ public class ChannelOnGoOffline {
 	}
 
 	public void onGoOffline(ChannelGoOfflineEvent event) {
-		System.out.println(event.getChannel().getName() + " is now offline.");
+		Logger.log(Level.INFO, event.getChannel().getName() + " is now offline.");
 	}
 	
 	

@@ -28,8 +28,8 @@ credentials:
 
 # Channels - The bot will connect to all listed channels. (needed for message events).
 channels:
-   - EclipsesKnight
-   - The_Origin_Hunters
+    - EclipsesKnight
+    - The_Origin_Hunters
     
 #Listener Channels - all of the channels the bot will listen to for fired events (go live, offline, follows, etc)
 listener_channels:
@@ -43,4 +43,3 @@ features:
       name: islive
       channels: 
          - EclipsesKnight
-

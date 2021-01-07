@@ -7,6 +7,8 @@ import java.util.List;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.helix.domain.StreamList;
 
+import twitch.hunsterverse.net.logger.Logger;
+import twitch.hunsterverse.net.logger.Logger.Level;
 import twitch.hunsterverse.net.twitch.TwitchBot;
 
 public class TwitchAPI {
@@ -31,11 +33,11 @@ public class TwitchAPI {
 		
 		
 		if (resultList.getStreams().size() > 0 && "live".equals(resultList.getStreams().get(0).getType())) {
-			System.out.println(resultList.getStreams().get(0).getUserName() + " is live.");
+			Logger.log(Level.INFO, resultList.getStreams().get(0).getUserName() + " is live.");
 			return true; 
 			
 		} else {
-			System.out.println("No Live Streams found under the login name \""+ username + "\".");
+			Logger.log(Level.INFO, "No Live Streams found under the login name \""+ username + "\".");
 			return false;
 		}
 		
