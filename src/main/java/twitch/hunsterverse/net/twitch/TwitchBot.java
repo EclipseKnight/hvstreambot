@@ -43,6 +43,14 @@ public class TwitchBot {
         // Load Configuration
         loadConfiguration();
 
+        if (configuration.getApi().get("twitch_client_id") == null 
+        		|| configuration.getApi().get("twitch_client_secret") == null 
+        		|| configuration.getCredentials().get("irc") == null) {
+        	Logger.log(Level.FATAL, "Twitch id, secret, or irc token is not set. Check the twitchbot.yaml keys: twitch_client_irc, twitch_client_id, twitch_client_id values.");
+        	Logger.log(Level.FATAL, "Exiting...");
+        	System.exit(1);
+        }
+        
         TwitchClientBuilder clientBuilder = TwitchClientBuilder.builder();
 
         //region Auth

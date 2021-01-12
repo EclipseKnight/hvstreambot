@@ -26,6 +26,7 @@ import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandConfiguration;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandIsLive;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandRestart;
+import twitch.hunsterverse.net.discord.commands.DiscordCommandUpdate;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
 
@@ -55,6 +56,15 @@ public class DiscordBot {
 	public DiscordBot() {
 		// Load Configuration
 		loadConfiguration();
+		
+		 if (configuration.getApi().get("discord_client_id") == null 
+	        		|| configuration.getApi().get("discord_client_token") == null
+	        		|| configuration.getOwnerId() == null) {
+	        	Logger.log(Level.FATAL, "Discord id or token or owner id is not set. Check the discordbot.yaml keys: discord_client_id, discord_client_token, and owner_id values.");
+	        	Logger.log(Level.FATAL, "Exiting...");
+	        	System.exit(1);
+	        }
+		
 		
 		for (GatewayIntent gt : GatewayIntent.values()) {
 			intents.add(0, gt);
@@ -86,8 +96,10 @@ public class DiscordBot {
 		// Register the commands to the builder.
 		registerCommands(builder);
 		
+		// For displaying currently live streamer as a status. Not currently working
+		//TODO implement
 		jda.getPresence().setActivity(Activity.of(ActivityType.DEFAULT, "Streamers \"Live\": 0 streamer(s)"));
-		
+		jda.getSelfUser().getManager().setName(configuration.getBot().get("name"));
 	}
 	
 	
@@ -97,6 +109,7 @@ public class DiscordBot {
 		
 		builder.addCommand(new DiscordCommandConfiguration());
 		builder.addCommand(new DiscordCommandRestart());
+		builder.addCommand(new DiscordCommandUpdate());
 		builder.addCommand(new DiscordCommandIsLive());
 		
 		// built command client
