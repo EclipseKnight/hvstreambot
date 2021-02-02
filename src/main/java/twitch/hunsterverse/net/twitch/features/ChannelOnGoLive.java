@@ -23,6 +23,8 @@ public class ChannelOnGoLive {
 	}
 
 	public void onGoLive(ChannelGoLiveEvent event) {
+		if (TwitchAPI.recentlyOffline.getIfPresent(event.getChannel().getId()) == true) return;
+		
 		Logger.log(Level.INFO, event.getStream().getUserName() + " is now live.");
 		HVStreamer s = CommandUtils.getUserWithTwitchChannel(event.getChannel().getName());
 		s.setStreaming(true);

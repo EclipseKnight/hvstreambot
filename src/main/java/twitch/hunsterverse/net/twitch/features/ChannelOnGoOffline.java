@@ -19,13 +19,16 @@ public class ChannelOnGoOffline {
 	}
 
 	public void onGoOffline(ChannelGoOfflineEvent event) {
+		
+		TwitchAPI.recentlyOffline.put(event.getChannel().getId(), true);
+		
 		Logger.log(Level.INFO, event.getChannel().getName() + " is now offline.");
 		HVStreamer s = CommandUtils.getUserWithTwitchChannel(event.getChannel().getName());
 		s.setStreaming(false);
 		JsonDB.database.upsert(s);
 		
 		DiscordUtils.setBotStatus((TwitchUtils.getLiveChannels().size()) + " streamer(s)");
-		DiscordUtils.sendRelayMessage(s.getDiscordName() + " [" + s.getTwitchChannel() + "]" + " is now offline.");
+//		DiscordUtils.sendRelayMessage(s.getDiscordName() + " [" + s.getTwitchChannel() + "]" + " is now offline.");
 	}
 	
 	

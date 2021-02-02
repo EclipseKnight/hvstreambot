@@ -3,7 +3,10 @@ package twitch.hunsterverse.net.twitch.features;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.helix.domain.GameList;
 import com.github.twitch4j.helix.domain.StreamList;
@@ -14,9 +17,8 @@ import twitch.hunsterverse.net.twitch.TwitchBot;
 
 public class TwitchAPI {
 
-	public int liveStreamers = 0;
 	
-	
+	public static final Cache<String, Boolean> recentlyOffline = Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES).build();
 	/**
 	 * 
 	 * @param username a username to check
