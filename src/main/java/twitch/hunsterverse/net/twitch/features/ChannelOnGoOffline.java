@@ -25,7 +25,7 @@ public class ChannelOnGoOffline {
 		JsonDB.database.upsert(s);
 		
 		DiscordUtils.setBotStatus((TwitchUtils.getLiveChannels().size()) + " streamer(s)");
-		DiscordUtils.sendRelayMessage(s.getDiscordName() + " [" + s.getTwitchChannel() + "]" + " is now offline.");
+//		DiscordUtils.sendRelayMessage(s.getDiscordName() + " [" + s.getTwitchChannel() + "]" + " is now offline.");
 	}
 	
 	
