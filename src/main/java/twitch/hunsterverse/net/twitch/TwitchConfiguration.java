@@ -1,11 +1,10 @@
 package twitch.hunsterverse.net.twitch;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
-import java.util.List;
-import java.util.Map;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,10 +17,6 @@ public class TwitchConfiguration {
     private Map<String, String> api;
 
     private Map<String, String> credentials;
-
-    private List<String> channels;
-    
-    private List<String> listenerChannels;
     
     private Map<String, TwitchFeature> features;
 
@@ -57,22 +52,6 @@ public class TwitchConfiguration {
         this.credentials = credentials;
     }
 
-    public List<String> getChannels() {
-        return channels;
-    }
-
-    public void setChannels(List<String> channels) {
-        this.channels = channels;
-    }
-    
-    public List<String> getListenerChannels() {
-    	return listenerChannels;
-    }
-    
-    public void setListenerChannels(List<String> listenerChannels) {
-    	this.listenerChannels = listenerChannels;
-    }
-    
     public Map<String, TwitchFeature> getFeatures() {
 		return features;
 	}
@@ -94,10 +73,9 @@ public class TwitchConfiguration {
 					 		mod_only = %s
 					 		name = %s,
 					 		channels = %s
-				""", bot, channels, listenerChannels,
+				""", bot,
 				features.get("twitch_command_is_live").isEnabled(),
 				features.get("twitch_command_is_live").isModOnly(),
-				features.get("twitch_command_is_live").getName(),
-				features.get("twitch_command_is_live").getChannels());
+				features.get("twitch_command_is_live").getName());
 	}
 }

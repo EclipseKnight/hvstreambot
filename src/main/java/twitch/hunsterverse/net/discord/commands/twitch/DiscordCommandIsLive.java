@@ -1,4 +1,4 @@
-package twitch.hunsterverse.net.discord.commands;
+package twitch.hunsterverse.net.discord.commands.twitch;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;

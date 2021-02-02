@@ -19,10 +19,9 @@ import com.github.twitch4j.TwitchClientBuilder;
 import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
+import twitch.hunsterverse.net.twitch.commands.ChannelCommandHandler;
 import twitch.hunsterverse.net.twitch.features.ChannelOnGoLive;
 import twitch.hunsterverse.net.twitch.features.ChannelOnGoOffline;
-import twitch.hunsterverse.net.twitch.features.WriteChannelChatToConsole;
-import twitch.hunsterverse.net.twitch.features.commands.ChannelCommandHandler;
 
 public class TwitchBot {
 
@@ -102,12 +101,12 @@ public class TwitchBot {
 		SimpleEventHandler eventHandler = twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class);
 
         // Register Event-based features
-		WriteChannelChatToConsole writeChannelChatToConsole = new WriteChannelChatToConsole(eventHandler);
+//		WriteChannelChatToConsole writeChannelChatToConsole = new WriteChannelChatToConsole(eventHandler);
 		ChannelCommandHandler channelCommandHandler = new ChannelCommandHandler(eventHandler);
 		ChannelOnGoLive channelOnGoLive = new ChannelOnGoLive(eventHandler);
 		ChannelOnGoOffline channelOnGoOffline = new ChannelOnGoOffline(eventHandler);
 		
-		twitchClient.getClientHelper().enableStreamEventListener(configuration.getListenerChannels());
+		twitchClient.getClientHelper().enableStreamEventListener(TwitchUtils.getListenerChannels());
     }
 
     /**
@@ -116,9 +115,9 @@ public class TwitchBot {
     public static void loadConfiguration() {
     	
     	
-    	File twitchBotConfig = new File(Launcher.configPath + File.separator + "configs" + File.separator + "twitchbot.yaml");
+    	File twitchBotConfig = new File(Launcher.uwd + File.separator + "hvstreambot" + File.separator + "configs" + File.separator + "twitchbot.yaml");
     	
-    	if (new File(Launcher.configPath + File.separator + "configs").mkdir()) {
+    	if (new File(Launcher.uwd + File.separator + "hvstreambot" + File.separator + "configs").mkdirs()) {
     		Logger.log(Level.WARN, "Generating configs directory...");
     	}
     	
@@ -151,7 +150,7 @@ public class TwitchBot {
         	
         	// copies twitchbot.yaml template to current working directory.
         	InputStream original = classloader.getResourceAsStream("twitchbot.yaml");
-            Path copy = Paths.get(new File(Launcher.configPath + File.separator + "configs" + File.separator + "twitchbot.yaml").toURI());
+            Path copy = Paths.get(new File(Launcher.uwd + File.separator + "hvstreambot" + File.separator + "configs" + File.separator + "twitchbot.yaml").toURI());
           
             Logger.log(Level.WARN, "Generating config at " + copy);
             Files.copy(original, copy);
@@ -164,9 +163,9 @@ public class TwitchBot {
 
     public void start() {
         // Connect to all channels
-        for (String channel : configuration.getChannels()) {
+        for (String channel : TwitchUtils.getListenerChannels()) {
             twitchClient.getChat().joinChannel(channel);
-            twitchClient.getChat().sendMessage(channel, "Twitch bot is started.");
+//            twitchClient.getChat().sendMessage(channel, "Twitch bot is started.");
         }
     }
 

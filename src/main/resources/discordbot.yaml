@@ -22,23 +22,71 @@ api:
     discord_client_token: 
 
 
-
 owner_id: 
 
 co_owner_ids:
    - 
 
-# Channels - The bot will connect to all listed channels
-channels:
-   - EclipsesKnight
-   - The_Origin_Hunters
-    
+guild_id:
+
+stream_role_id:
+
 features:
+   discord_message_relay:
+      enabled: true
+      channels:
+         - null
+
+   discord_command_config: 
+      enabled: true
+      linked: false
+      description: config stuff
+      channels:
+         - null
+      roles:
+         - null
+         
+   discord_command_restart: 
+      enabled: true
+      linked: false
+      description: restart twitch/discord bot
+      channels:
+         - null
+      roles:
+         - null
+         
+   discord_command_link: 
+      enabled: true
+      linked: false
+      name: link
+      aliases: []
+      description: link user with twitch channel
+      channels:
+         - null
+      roles:
+         - null
+         
+   discord_command_unlink: 
+      enabled: true
+      linked: false
+      name: unlink
+      aliases: []
+      description: unlink user from twitch channel.
+      channels:
+         - null
+      roles:
+         - null    
+              
    #!c islive
    discord_command_is_live: 
       enabled: true
+      linked: false
       name: islive
+      aliases: []
+      description: check if channel is live
       channels:
-         - 746380974048411651
+         - null
+      roles:
+         - null
       
    

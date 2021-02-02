@@ -1,4 +1,4 @@
-package twitch.hunsterverse.net.twitch.features.commands;
+package twitch.hunsterverse.net.twitch.commands;
 
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;

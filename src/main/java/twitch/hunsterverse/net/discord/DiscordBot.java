@@ -19,16 +19,16 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Activity.ActivityType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import twitch.hunsterverse.net.Launcher;
-import twitch.hunsterverse.net.discord.commands.DiscordCommandConfiguration;
-import twitch.hunsterverse.net.discord.commands.DiscordCommandIsLive;
-import twitch.hunsterverse.net.discord.commands.DiscordCommandRestart;
-import twitch.hunsterverse.net.discord.commands.DiscordCommandUpdate;
+import twitch.hunsterverse.net.discord.commands.DiscordCommandLink;
+import twitch.hunsterverse.net.discord.commands.DiscordCommandUnlink;
+import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandRestart;
+import twitch.hunsterverse.net.discord.commands.owner.config.DiscordCommandConfiguration;
+import twitch.hunsterverse.net.discord.commands.twitch.DiscordCommandIsLive;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
+import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class DiscordBot {
 
@@ -72,7 +72,7 @@ public class DiscordBot {
 		
 		
 		try {
-			jda = JDABuilder.createLight(configuration.getApi().get("discord_client_token"), intents).build().awaitReady();
+			jda = JDABuilder.create(configuration.getApi().get("discord_client_token"), intents).build().awaitReady();
 		} catch (LoginException | InterruptedException e) {
 			System.out.println("Discord bot failed to initialize: " + e.toString());
 			return;
@@ -88,7 +88,7 @@ public class DiscordBot {
 		builder.setCoOwnerIds(configuration.getCoOwnerIds().toArray(new String[configuration.getCoOwnerIds().size()]));
 		
 		// Sets the command prefix (e.g. !c isLive Name)
-		builder.setPrefix("!c ");
+		builder.setPrefix("!s ");
 		
 		// Sets the default help command
 		builder.setHelpWord("help");
@@ -98,7 +98,7 @@ public class DiscordBot {
 		
 		// For displaying currently live streamer as a status. Not currently working
 		//TODO implement
-		jda.getPresence().setActivity(Activity.of(ActivityType.DEFAULT, "Streamers \"Live\": 0 streamer(s)"));
+		DiscordUtils.setBotStatus(TwitchUtils.getLiveChannels().size() + " streamer(s)");
 		jda.getSelfUser().getManager().setName(configuration.getBot().get("name"));
 	}
 	
@@ -107,10 +107,14 @@ public class DiscordBot {
 	private void registerCommands(CommandClientBuilder builder) {
 		// adds command to builder
 		
-		builder.addCommand(new DiscordCommandConfiguration());
-		builder.addCommand(new DiscordCommandRestart());
-		builder.addCommand(new DiscordCommandUpdate());
-		builder.addCommand(new DiscordCommandIsLive());
+		builder.addCommands(
+				new DiscordCommandConfiguration(),
+				new DiscordCommandRestart(),
+				new DiscordCommandIsLive(),
+				new DiscordCommandLink(),
+				new DiscordCommandUnlink()
+//				new DiscordCommandUpdate() TODO fix update for linux. As of now just manually run updater.
+				);
 		
 		// built command client
 		CommandClient cmdClient = builder.build();
@@ -123,16 +127,13 @@ public class DiscordBot {
      * Load the Configuration
      */
     public static void loadConfiguration() {
+    	File twitchBotConfig = new File(Launcher.uwd + File.separator + "hvstreambot" + File.separator + "configs" + File.separator + "discordbot.yaml");
     	
-    	
-    	File twitchBotConfig = new File(Launcher.configPath + File.separator + "configs" + File.separator + "discordbot.yaml");
-    	
-    	if (new File(Launcher.configPath + File.separator + "configs").mkdir()) {
+    	if (new File(Launcher.uwd + File.separator + "hvstreambot" + File.separator + "configs").mkdirs()) {
     		Logger.log(Level.WARN, "Generating configs directory...");
     	}
     	
     	try {
-    		
     		if (!twitchBotConfig.exists()) {
         		generateConfig();
         	}
@@ -160,7 +161,7 @@ public class DiscordBot {
         	
         	// copies twitchbot.yaml template to current working directory.
         	InputStream original = classloader.getResourceAsStream("discordbot.yaml");
-            Path copy = Paths.get(new File(Launcher.configPath + File.separator + "configs" + File.separator + "discordbot.yaml").toURI());
+            Path copy = Paths.get(new File(Launcher.uwd + File.separator + "hvstreambot" + File.separator + "configs" + File.separator + "discordbot.yaml").toURI());
           
             Logger.log(Level.WARN, "Generating config at " + copy);
             Files.copy(original, copy);
