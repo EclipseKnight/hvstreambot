@@ -26,15 +26,6 @@ credentials:
     # OAuth Token for IRC User (You can get yours here: http://twitchapps.com/tmi/)
     irc: 
 
-# Channels - The bot will connect to all listed channels. (needed for message events).
-channels:
-    - EclipsesKnight
-    - The_Origin_Hunters
-    
-#Listener Channels - all of the channels the bot will listen to for fired events (go live, offline, follows, etc)
-listener_channels:
-   - EclipsesKnight
-   - The_Origin_Hunters
    
 features:
    twitch_command_is_live:

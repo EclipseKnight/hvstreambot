@@ -1,4 +1,4 @@
-package twitch.hunsterverse.net.discord.commands;
+package twitch.hunsterverse.net.discord.commands.owner;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -12,7 +12,6 @@ public class DiscordCommandUpdate extends Command {
 	public DiscordCommandUpdate() {
 		this.name = "update";
 		this.ownerCommand = true;
-		this.hidden = true;
 	}
 	
 	

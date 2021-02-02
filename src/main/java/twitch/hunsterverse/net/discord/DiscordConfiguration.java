@@ -18,8 +18,10 @@ public class DiscordConfiguration {
 	private String ownerId;
 	
 	private List<String> coOwnerIds;
-
-	private List<String> channels;
+	
+	private String guildId;
+	
+	private String streamRoleId;
 	
 	private Map<String, DiscordFeature> features;
 
@@ -50,13 +52,21 @@ public class DiscordConfiguration {
 	public List<String> getCoOwnerIds() {
 		return coOwnerIds;
 	}
-
-	public List<String> getChannels() {
-		return channels;
+	
+	public String getGuildId() {
+		return guildId;
 	}
-
-	public void setChannels(List<String> channels) {
-		this.channels = channels;
+	
+	public void setGuildId(String guildId) {
+		this.guildId = guildId;
+	}
+	
+	public String getStreamRoleId() {
+		return streamRoleId;
+	}
+	
+	public void setStreamRoleId(String streamRoleId) {
+		this.streamRoleId = streamRoleId;
 	}
 	
 	public Map<String, DiscordFeature> getFeatures() {
@@ -82,9 +92,8 @@ public class DiscordConfiguration {
 					 		enabled = %s,
 					 		name = %s,
 					 		channels = %s
-				""", bot, ownerId, coOwnerIds, channels,
+				""", bot, ownerId, coOwnerIds,
 				features.get("discord_command_is_live").isEnabled(),
-				features.get("discord_command_is_live").getName(),
-				features.get("discord_command_is_live").getChannels());
+				features.get("discord_command_is_live").getName());
 	}
 }

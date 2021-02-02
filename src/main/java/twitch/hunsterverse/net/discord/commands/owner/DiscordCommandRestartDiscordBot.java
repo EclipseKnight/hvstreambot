@@ -1,23 +1,21 @@
-package twitch.hunsterverse.net.discord.commands;
+package twitch.hunsterverse.net.discord.commands.owner;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.discord.DiscordBot;
+import twitch.hunsterverse.net.discord.DiscordUtils;
 
-public class DiscordCommandRestart extends Command {
+public class DiscordCommandRestartDiscordBot extends Command {
 
-	public DiscordCommandRestart() {
-		this.name = "restart";
-		this.ownerCommand = true;
-		this.hidden = true;
+	public DiscordCommandRestartDiscordBot() {
+		this.name = "discord";
 	}
-	
 	
 	@Override
 	protected void execute(CommandEvent event) {
-		event.reply("Restarting Discord Bot...");
+		DiscordUtils.sendMessage(event, "Restarting Discord Bot...", false);
 		DiscordBot.jda.shutdown();
 		Launcher.discordBot = new DiscordBot();
 	}

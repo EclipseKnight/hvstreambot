@@ -2,6 +2,7 @@ package twitch.hunsterverse.net.updater;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.logger.Logger;
@@ -9,7 +10,7 @@ import twitch.hunsterverse.net.logger.Logger.Level;
 
 public class Updater {
 
-	public static String updaterPath = Launcher.configPath + File.separator + "hvstreambotupdater.jar";
+	public static String updaterPath = Launcher.uwd + File.separator + "hvstreambotupdater.jar";
 	public static String os = System.getProperty("os.name").toLowerCase();
 	
 	/**
@@ -21,14 +22,19 @@ public class Updater {
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			
 			if (os.contains("win")) {
-				processBuilder.command("cmd", "/c", "start", "cmd.exe", "/k", "java", "-jar", updaterPath, "--update");
+				Logger.log(Level.INFO, "Starting updater...");
+				processBuilder.command("cmd", "/c", "start", "cmd.exe", "/c", "java", "-jar", updaterPath, "--update");
+				System.out.println(Arrays.toString(processBuilder.command().toArray()));
 			}
 			
 			if (os.contains("linux")) {
+				Logger.log(Level.INFO, "Starting updater...");
+				Logger.log(Level.INFO, updaterPath);
 				processBuilder.command("gnome-terminal", "--", "java", "-jar", updaterPath, "--update");
 			}
 			
 			if (os.contains("mac")) {
+				Logger.log(Level.INFO, "Starting updater...");
 				processBuilder.command("/bin/bash", "-c", "java", "-jar", updaterPath, "--update");
 			}
 			
@@ -40,13 +46,7 @@ public class Updater {
 			}
 			
 		});
-		
 		Runtime.getRuntime().addShutdownHook(updateHook);
-		try {
-			Runtime.getRuntime().exec("taskkill /f /im cmd.exe");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.exit(100);
+		System.exit(0);
 	}
 }

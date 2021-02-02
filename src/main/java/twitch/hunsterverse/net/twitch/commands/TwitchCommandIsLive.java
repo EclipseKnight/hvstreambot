@@ -1,4 +1,4 @@
-package twitch.hunsterverse.net.twitch.features.commands;
+package twitch.hunsterverse.net.twitch.commands;
 
 import java.util.Arrays;
 
