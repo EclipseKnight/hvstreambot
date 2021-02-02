@@ -19,7 +19,6 @@ public class ChannelOnGoLive {
 	
 	public ChannelOnGoLive(SimpleEventHandler eventHandler) {
 		eventHandler.onEvent(ChannelGoLiveEvent.class, event -> onGoLive(event));
-		
 	}
 
 	public void onGoLive(ChannelGoLiveEvent event) {
@@ -42,10 +41,9 @@ public class ChannelOnGoLive {
 		eb.setTitle(event.getStream().getTitle(), TwitchUtils.getTwitchChannelUrl(s.getTwitchChannel()));
 		eb.addField("Game", TwitchAPI.getGameName(event.getStream().getGameId()), true);
 		eb.addField("Viewers", event.getStream().getViewerCount().toString(), true);
-		eb.setImage(event.getStream().getThumbnailUrl(220, 114));
+		eb.setImage(event.getStream().getThumbnailUrl(440, 228));
 		
 		DiscordUtils.sendRelayMessage(eb.build());
-		
 	}
 	
 	

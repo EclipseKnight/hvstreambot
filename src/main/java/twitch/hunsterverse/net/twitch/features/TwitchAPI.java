@@ -1,7 +1,7 @@
 package twitch.hunsterverse.net.twitch.features;
 
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -25,18 +25,7 @@ public class TwitchAPI {
 	 * @return a boolean. true if live, else false.
 	 */
 	public static boolean isLive(String username) {
-		List<String> users = new ArrayList<String>();
-		
-		/*
-		 * Only alphanumerical and no spaces.
-		 */
-		if (!username.matches("^[a-zA-Z0-9]*$")) {
-			return false; 
-		}
-		
-		users.add(username);
-		StreamList resultList = TwitchBot.twitchClient.getHelix().getStreams(null, null, null, 5, null, null, null, users).execute();
-		
+		StreamList resultList = TwitchBot.twitchClient.getHelix().getStreams(null, null, null, 5, null, null, null, Collections.singletonList(username)).execute();	
 		
 		if (resultList.getStreams().size() > 0 && "live".equals(resultList.getStreams().get(0).getType())) {
 //			Logger.log(Level.INFO, resultList.getStreams().get(0).getUserName() + " is live.");
@@ -78,11 +67,8 @@ public class TwitchAPI {
 		if (channel == null)
 			return false;
 		
-		List<String> user = new ArrayList<>();
-		user.add(channel);
-		
-		UserList list = TwitchBot.twitchClient.getHelix().getUsers(null, null, user).execute();
-		if (list.getUsers().size() > 0 && list.getUsers().get(0).getDisplayName().equalsIgnoreCase(channel)) {
+		UserList list = TwitchBot.twitchClient.getHelix().getUsers(null, null, Collections.singletonList(channel)).execute();
+		if (list.getUsers().size() > 0 && list.getUsers().get(0).getLogin().equalsIgnoreCase(channel)) {
 			return true;
 		}
 		
@@ -105,24 +91,17 @@ public class TwitchAPI {
 	 * @return
 	 */
 	public static User getTwitchUser(String name) {
+		UserList list = TwitchBot.twitchClient.getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
 		
-		List<String> user = new ArrayList<>();
-		user.add(name);
-		
-		UserList list = TwitchBot.twitchClient.getHelix().getUsers(null, null, user).execute();
-		
-		if (list.getUsers().size() > 0 && list.getUsers().get(0).getDisplayName().equalsIgnoreCase(name)) {
+		if (list.getUsers().size() > 0 && list.getUsers().get(0).getLogin().equalsIgnoreCase(name)) {
 			return list.getUsers().get(0);
 		}
-		
 		return null;
 	}
 	
 	public static String getGameName(String gameId) {
-		List<String> game = new ArrayList<>();
-		game.add(gameId);
 		
-		GameList result = TwitchBot.twitchClient.getHelix().getGames(null, game, null).execute();
+		GameList result = TwitchBot.twitchClient.getHelix().getGames(null, Collections.singletonList(gameId), null).execute();
 		if (result.getGames().size() > 0 && result.getGames().get(0).getId().equals(gameId)) {
 			return result.getGames().get(0).getName();
 		}
