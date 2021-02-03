@@ -14,6 +14,10 @@ public class TwitchUtils {
 		return "https://www.twitch.tv/" + channel;
 	}
 	
+	/**
+	 * Gets a list of the HV streamers to listen to for events.
+	 * @return
+	 */
 	public static List<String> getListenerChannels() {
 		List<String> channels = new ArrayList<>();
 		
@@ -25,6 +29,10 @@ public class TwitchUtils {
 		return channels;
 	}
 	
+	/**
+	 * Gets a list of the live HV streamers.
+	 * @return
+	 */
 	public static List<String> getLiveChannels() {
 		List<String> channels = new ArrayList<>();
 		

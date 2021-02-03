@@ -17,8 +17,11 @@ import twitch.hunsterverse.net.twitch.TwitchBot;
 
 public class TwitchAPI {
 
-	
+	/**
+	 * Temporary fix for twitch online/offline events double firing. 
+	 */
 	public static final Cache<String, Boolean> recentlyOffline = Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES).build();
+	
 	/**
 	 * 
 	 * @param username a username to check

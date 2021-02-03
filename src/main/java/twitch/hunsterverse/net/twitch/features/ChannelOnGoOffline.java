@@ -18,6 +18,10 @@ public class ChannelOnGoOffline {
 		
 	}
 
+	/**
+	 * Fires when one of the linked streamers go offline.
+	 * @param event
+	 */
 	public void onGoOffline(ChannelGoOfflineEvent event) {
 		
 		TwitchAPI.recentlyOffline.put(event.getChannel().getId(), true);

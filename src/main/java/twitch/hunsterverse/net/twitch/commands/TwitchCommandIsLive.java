@@ -6,6 +6,11 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
 
+/**
+ * Command to execute when isLive command is fired in chat.
+ * @author jpaqu
+ *
+ */
 public class TwitchCommandIsLive {
 
 	public static void execute(ChannelMessageEvent event) {
