@@ -83,19 +83,25 @@ public class CommandUtils {
 	 * @return
 	 */
 	public static boolean isFeatureLinked(String discordId, String feature) {
+		
 		if (DiscordBot.configuration.getFeatures().get(feature).isLinked()) {
 			
-			if (JsonDB.database.findById(discordId, HVStreamer.class) == null) {
+			if (getUserWithDiscordId(discordId) == null) {
 				return false;
 			}
 			
-			if (!JsonDB.database.findById(discordId, HVStreamer.class).isLinked()) {
-				return false;
+			if (getUserWithDiscordId(discordId).isLinked()) {
+				return true;
 			}
+			
+			return false;
+			
+		} else {
+			return true;
 		}
 		
-		return true;
 	}
+	
 	
 	/**
 	 * Checks if the user can use the command based on roles.

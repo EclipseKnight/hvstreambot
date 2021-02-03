@@ -21,6 +21,10 @@ public class ChannelOnGoLive {
 		eventHandler.onEvent(ChannelGoLiveEvent.class, event -> onGoLive(event));
 	}
 
+	/**
+	 * Fires when one of the linked streamers go live.
+	 * @param event
+	 */
 	public void onGoLive(ChannelGoLiveEvent event) {
 		if (TwitchAPI.recentlyOffline.getIfPresent(event.getChannel().getId()) == true) return;
 		
