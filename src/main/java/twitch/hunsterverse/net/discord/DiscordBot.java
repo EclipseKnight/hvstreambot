@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import twitch.hunsterverse.net.Launcher;
+import twitch.hunsterverse.net.discord.commands.DiscordCommandHelp;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandLink;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandUnlink;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandRestart;
@@ -31,6 +32,8 @@ import twitch.hunsterverse.net.logger.Logger.Level;
 import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class DiscordBot {
+
+	public static final String prefix = "!s ";
 
 	/**
 	 * Holds the Bot Configuration
@@ -88,10 +91,13 @@ public class DiscordBot {
 		builder.setCoOwnerIds(configuration.getCoOwnerIds().toArray(new String[configuration.getCoOwnerIds().size()]));
 		
 		// Sets the command prefix (e.g. !c isLive Name)
-		builder.setPrefix("!s ");
+		builder.setPrefix(prefix);
 		
 		// Sets the default help command
 		builder.setHelpWord("help");
+		
+		// Sets the default help command
+		builder.setHelpConsumer(new DiscordCommandHelp());
 		
 		// Register the commands to the builder.
 		registerCommands(builder);

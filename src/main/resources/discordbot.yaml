@@ -40,7 +40,7 @@ features:
    discord_command_config: 
       enabled: true
       linked: false
-      description: config stuff
+      description: "config [(list, ls), reload] - reloads the bot config."
       channels:
          - null
       roles:
@@ -49,7 +49,7 @@ features:
    discord_command_restart: 
       enabled: true
       linked: false
-      description: restart twitch/discord bot
+      description: "restart [twitch, discord] - restarts twitch or discord bot."
       channels:
          - null
       roles:
@@ -60,7 +60,7 @@ features:
       linked: false
       name: link
       aliases: []
-      description: link user with twitch channel
+      description: "link <@discorduser> <twitchchannel> [<affiliate> true, false] - links user and channel and designate if they are affilite or not"
       channels:
          - null
       roles:
@@ -71,7 +71,7 @@ features:
       linked: false
       name: unlink
       aliases: []
-      description: unlink user from twitch channel.
+      description: "unlink <discordId or mention> - unlinks user."
       channels:
          - null
       roles:
@@ -83,7 +83,7 @@ features:
       linked: false
       name: islive
       aliases: []
-      description: check if channel is live
+      description: "islive <twitchchannel> - checks if channel is live."
       channels:
          - null
       roles:
