@@ -43,6 +43,10 @@ public class DiscordCommandHelp implements Consumer<CommandEvent> {
 			result = false;
 		}
 		
+		if (!CommandUtils.isAffiliateFeature(event.getAuthor().getId(), feature)) {
+			result = false;
+		}
+		
 		if (!CommandUtils.canUseCommand(event, feature)) {
 			result = false;
 		}

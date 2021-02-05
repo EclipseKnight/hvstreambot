@@ -21,43 +21,64 @@ api:
     # Discord Application Client Token
     discord_client_token: 
 
-
+#required for bot setup.
 owner_id: 
 
+#not required but might as well put something.
 co_owner_ids:
    - 
-
+   
+#required for sending messages in some cases
 guild_id:
 
+#required for the bot to know what role to assigned linked users.
 stream_role_id:
 
+
+#example feature *=required
+#  poop_on_user   
+#     enabled:* [true, false] - is command disabled or not. 
+#     linked: [true, false] - does user have to be linked.
+#     affiliate: [true, false] - is affiliate or not. 
+#     description:* "input a description of this command, displayed via help command".
+#     channels: - [0]=null if command can be used everywhere, otherwise put channels it can be used in.
+#        - null*
+#     roles: - same as channels but for roles instead. 
+#        - null*
+
 features:
+   #required so the bot knows where to send announcements.
+   #channels [0]=null won't post anywhere
    discord_message_relay:
       enabled: true
       channels:
          - null
 
+   #config commands. Ideally for admin use only.
    discord_command_config: 
       enabled: true
       linked: false
+      affiliate: true
       description: "config [(list, ls), reload] - reloads the bot config."
       channels:
          - null
       roles:
          - null
-         
+   #restart commands. Ideally for admin use only.  
    discord_command_restart: 
       enabled: true
       linked: false
+      affiliate: true
       description: "restart [twitch, discord] - restarts twitch or discord bot."
       channels:
          - null
       roles:
          - null
-         
+   #link command, also for admin/streamer manager use only.      
    discord_command_link: 
       enabled: true
       linked: false
+      affiliate: true
       name: link
       aliases: []
       description: "link <@discorduser> <twitchchannel> [<affiliate> true, false] - links user and channel and designate if they are affilite or not"
@@ -66,9 +87,11 @@ features:
       roles:
          - null
          
+   #same as link but unlinking.      
    discord_command_unlink: 
       enabled: true
       linked: false
+      affiliate: false
       name: unlink
       aliases: []
       description: "unlink <discordId or mention> - unlinks user."
@@ -77,10 +100,11 @@ features:
       roles:
          - null    
               
-   #!c islive
+   #mainly an example command that checks if channel is live.
    discord_command_is_live: 
       enabled: true
       linked: false
+      affiliate: false
       name: islive
       aliases: []
       description: "islive <twitchchannel> - checks if channel is live."

@@ -9,6 +9,7 @@ public class DiscordFeature {
 	
 	private boolean enabled;
 	private boolean linked;
+	private boolean affiliate;
 	private String name;
 	private String[] aliases;
 	private String description;
@@ -19,6 +20,7 @@ public class DiscordFeature {
 	public DiscordFeature(
 			@JsonProperty("enabled") boolean enabled,
 			@JsonProperty("linked") boolean linked,
+			@JsonProperty("affiliate") boolean affiliate,
 			@JsonProperty("name") String name,
 			@JsonProperty("asliases") String[] aliases,
 			@JsonProperty("description") String description,
@@ -26,6 +28,7 @@ public class DiscordFeature {
 			@JsonProperty("roles") List<String> roles) {
 		this.enabled = enabled;
 		this.linked = linked;
+		this.affiliate = affiliate;
 		this.name = name;
 		this.aliases = aliases;
 		this.description = description;
@@ -47,6 +50,14 @@ public class DiscordFeature {
 	
 	public void setLinked(boolean linked) {
 		this.linked = linked;
+	}
+	
+	public boolean isAffiliate() {
+		return affiliate;
+	}
+	
+	public void setAffiliate(boolean affiliate) {
+		this.affiliate = affiliate;
 	}
 	
 	public String getName() {
