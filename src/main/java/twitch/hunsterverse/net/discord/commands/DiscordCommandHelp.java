@@ -14,9 +14,11 @@ public class DiscordCommandHelp implements Consumer<CommandEvent> {
 		String[] commands = new String[] {
 				"discord_command_config",
 				"discord_command_restart",
+				"discord_command_check",
 				"discord_command_link",
 				"discord_command_unlink",
-				"discord_command_is_live"
+				"discord_command_is_live",
+				"discord_command_embed_update"
 				};
 		
 		String message = "```yaml\nCommands you can use:\n";

@@ -34,6 +34,9 @@ guild_id:
 #required for the bot to know what role to assigned linked users.
 stream_role_id:
 
+#required for the bot to post the active live stream embed
+live_embed_channel:
+
 
 #example feature *=required
 #  poop_on_user   
@@ -64,6 +67,7 @@ features:
          - null
       roles:
          - null
+         
    #restart commands. Ideally for admin use only.  
    discord_command_restart: 
       enabled: true
@@ -74,11 +78,25 @@ features:
          - null
       roles:
          - null
+         
+   #check command. Ideally for admin use only.  Simply displays information about the user/channel to check if its linked or not. 
+   discord_command_check:
+      enabled: true
+      linked: false
+      affiliate: false
+      name: check
+      aliases: []
+      description: "check [<@discorduser>, <twitchchannel>] - displays known information regarding the passed argument i.e. user association, affiliation, etc"
+      channels:
+         - null
+      roles:
+         - null
+      
    #link command, also for admin/streamer manager use only.      
    discord_command_link: 
       enabled: true
       linked: false
-      affiliate: true
+      affiliate: false
       name: link
       aliases: []
       description: "link <@discorduser> <twitchchannel> [<affiliate> true, false] - links user and channel and designate if they are affilite or not"
@@ -100,6 +118,19 @@ features:
       roles:
          - null    
               
+   #for updating live stream active embed     
+   discord_command_embed_update: 
+      enabled: true
+      linked: false
+      affiliate: false
+      name: embedupdate
+      aliases: []
+      description: "updates the live stream active embeds."
+      channels:
+         - null
+      roles:
+         - null
+         
    #mainly an example command that checks if channel is live.
    discord_command_is_live: 
       enabled: true

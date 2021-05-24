@@ -1,4 +1,4 @@
-package twitch.hunsterverse.net.database;
+package twitch.hunsterverse.net.database.documents;
 
 import io.jsondb.annotation.Document;
 import io.jsondb.annotation.Id;
@@ -16,6 +16,7 @@ public class HVStreamer {
 	private boolean affiliate;
 	private boolean pingable;
 	private boolean streaming;
+	
 	
 	public String getDiscordId() {
 		return discordId;

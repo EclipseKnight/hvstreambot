@@ -3,8 +3,8 @@ package twitch.hunsterverse.net.discord.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import twitch.hunsterverse.net.database.HVStreamer;
 import twitch.hunsterverse.net.database.JsonDB;
+import twitch.hunsterverse.net.database.documents.HVStreamer;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 import twitch.hunsterverse.net.twitch.commands.TwitchCommandRestart;
@@ -12,7 +12,7 @@ import twitch.hunsterverse.net.twitch.features.TwitchAPI;
 
 public class DiscordCommandLink extends Command {
 
-	String feature = "discord_command_link";
+	final String feature = "discord_command_link";
 	public DiscordCommandLink() {
 		this.name = DiscordBot.configuration.getFeatures().get(feature).getName();
 		this.aliases = DiscordBot.configuration.getFeatures().get(feature).getAliases();
@@ -27,20 +27,32 @@ public class DiscordCommandLink extends Command {
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
 		if (args.length < 3) {
-			DiscordUtils.sendTimedMessaged(event, "Invalid Arguments: link <@discorduser> <twitchchannel> [<affiliate> true, false]", 5000, false);
+			DiscordUtils.sendTimedMessaged(event, """
+					```yaml
+					Invalid Arguments: link <@discorduser> <twitchchannel> [<affiliate> true, false]
+					```
+					""", 10000, false);
 			return;
 		}
 			
 		
 		String discordId = CommandUtils.getIdFromMention(args[0]);
 		if (!CommandUtils.isValidSnowflake(discordId)) {
-			DiscordUtils.sendTimedMessaged(event, "Invalid Snowflake.", 5000, false);
+			DiscordUtils.sendTimedMessaged(event, """
+					```yaml
+					Invalid Snowflake.
+					```
+					""", 10000, false);
 			return;
 		}
 		
 		String channel = args[1].trim();
 		if (!TwitchAPI.isChannel(channel)) {
-			DiscordUtils.sendTimedMessaged(event, "Channel does not exist.", 5000, false);
+			DiscordUtils.sendTimedMessaged(event, """
+					```yaml
+					Channel does not exist.
+					```
+					""", 10000, false);
 			return;
 		}
 		

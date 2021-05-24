@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.security.auth.login.LoginException;
 
@@ -21,9 +22,13 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import twitch.hunsterverse.net.Launcher;
+import twitch.hunsterverse.net.database.JsonDB;
+import twitch.hunsterverse.net.database.documents.ActiveEmbed;
+import twitch.hunsterverse.net.discord.commands.DiscordCommandCheck;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandHelp;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandLink;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandUnlink;
+import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandEmbedUpdate;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandRestart;
 import twitch.hunsterverse.net.discord.commands.owner.config.DiscordCommandConfiguration;
 import twitch.hunsterverse.net.discord.commands.twitch.DiscordCommandIsLive;
@@ -102,14 +107,23 @@ public class DiscordBot {
 		// Register the commands to the builder.
 		registerCommands(builder);
 		
-		// For displaying currently live streamer as a status. Not currently working
-		//TODO implement
+		//to start active stream embeds.
+		startActiveStreamEmbed();
+		
+		// For displaying current number of live streamer as a status. 
 		DiscordUtils.setBotStatus(TwitchUtils.getLiveChannels().size() + " streamer(s)");
 		jda.getSelfUser().getManager().setName(configuration.getBot().get("name"));
+	
 	}
 	
-	
-	
+	private void startActiveStreamEmbed() {
+		List<ActiveEmbed> embeds = JsonDB.database.getCollection(ActiveEmbed.class);
+		if (embeds.isEmpty()) {
+			DiscordUtils.createLiveEmbed();
+		}
+		DiscordUtils.updateLiveEmbeds();
+	}
+
 	private void registerCommands(CommandClientBuilder builder) {
 		// adds command to builder
 		
@@ -117,8 +131,10 @@ public class DiscordBot {
 				new DiscordCommandConfiguration(),
 				new DiscordCommandRestart(),
 				new DiscordCommandIsLive(),
+				new DiscordCommandCheck(),
 				new DiscordCommandLink(),
-				new DiscordCommandUnlink()
+				new DiscordCommandUnlink(),
+				new DiscordCommandEmbedUpdate()
 //				new DiscordCommandUpdate() TODO fix update for linux. As of now just manually run updater.
 				);
 		

@@ -23,6 +23,8 @@ public class DiscordConfiguration {
 	
 	private String streamRoleId;
 	
+	private String liveEmbedChannel;
+	
 	private Map<String, DiscordFeature> features;
 
 	public Map<String, String> getBot() {
@@ -67,6 +69,14 @@ public class DiscordConfiguration {
 	
 	public void setStreamRoleId(String streamRoleId) {
 		this.streamRoleId = streamRoleId;
+	}
+	
+	public String getLiveEmbedChannel() {
+		return liveEmbedChannel;
+	}
+	
+	public void setLiveEmbedChannel(String liveEmbedChannel) {
+		this.liveEmbedChannel = liveEmbedChannel;
 	}
 	
 	public Map<String, DiscordFeature> getFeatures() {
