@@ -58,7 +58,7 @@ public class DiscordUtils {
 		List<ActiveEmbed> aes = JsonDB.database.getCollection(ActiveEmbed.class);
 		List<String> liveChannels = TwitchUtils.getLiveChannels();
 		if (liveChannels.size() <= 0) {
-			System.out.println("No live channels.");
+			Logger.log(Level.INFO, "No live channels.");
 			return;
 		}
 		
