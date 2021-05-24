@@ -25,8 +25,6 @@ import twitch.hunsterverse.net.twitch.TwitchUtils;
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
 
 public class DiscordUtils {
-
-	
 	
 	public static void createLiveEmbed() {
 		String guildId = DiscordBot.configuration.getGuildId();
@@ -63,7 +61,7 @@ public class DiscordUtils {
 		}
 		
 		int fieldCount = liveChannels.size();
-		final int numOfEmbeds = 1 + (fieldCount / 26);
+		final int numOfEmbeds = (int) (1 + (Math.ceil(fieldCount / 25.0) - 1));
 		
 		Logger.log(Level.WARN, numOfEmbeds + " active embeds are needed.");
 		
@@ -139,7 +137,7 @@ public class DiscordUtils {
 			
 			int i = 0;
 			while (i < 25 && i < remainFields) {
-				String ch = liveChannels.get(channelIndex); //TODO
+				String ch = liveChannels.get(channelIndex);
 				Stream s = TwitchAPI.getTwitchStream(ch);
 				HVStreamer hv = CommandUtils.getUserWithTwitchChannel(ch);
 				String game = TwitchAPI.getGameName(s.getGameId());
