@@ -9,6 +9,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.helix.domain.GameList;
+import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
@@ -22,6 +23,8 @@ public class TwitchAPI {
 	 */
 	public static final Cache<String, Boolean> recentlyOffline = Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES).build();
 	
+	public static String lastEmbed = "";
+	
 	/**
 	 * 
 	 * @param username a username to check
@@ -31,14 +34,11 @@ public class TwitchAPI {
 		StreamList resultList = TwitchBot.twitchClient.getHelix().getStreams(null, null, null, 5, null, null, null, Collections.singletonList(username)).execute();	
 		
 		if (resultList.getStreams().size() > 0 && "live".equals(resultList.getStreams().get(0).getType())) {
-//			Logger.log(Level.INFO, resultList.getStreams().get(0).getUserName() + " is live.");
 			return true; 
 			
 		} else {
-//			Logger.log(Level.INFO, "No \"Live\" Streams found under the login name \""+ username + "\".");
 			return false;
 		}
-		
 	}
 	
 	/**
@@ -98,6 +98,20 @@ public class TwitchAPI {
 		
 		if (list.getUsers().size() > 0 && list.getUsers().get(0).getLogin().equalsIgnoreCase(name)) {
 			return list.getUsers().get(0);
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets a twitch stream.
+	 * @param username
+	 * @return
+	 */
+	public static Stream getTwitchStream(String username) {
+		StreamList list = TwitchBot.twitchClient.getHelix().getStreams(null, null, null, 5, null, null, null, Collections.singletonList(username)).execute();	
+		
+		if (list.getStreams().size() > 0 && list.getStreams().get(0).getUserName().equalsIgnoreCase(username)) {
+			return list.getStreams().get(0);
 		}
 		return null;
 	}

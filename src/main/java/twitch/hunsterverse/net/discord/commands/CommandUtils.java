@@ -6,8 +6,8 @@ import java.util.List;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import net.dv8tion.jda.api.entities.Role;
-import twitch.hunsterverse.net.database.HVStreamer;
 import twitch.hunsterverse.net.database.JsonDB;
+import twitch.hunsterverse.net.database.documents.HVStreamer;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 

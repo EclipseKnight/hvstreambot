@@ -5,13 +5,15 @@ import java.io.File;
 import io.jsondb.JsonDBTemplate;
 import io.jsondb.events.CollectionFileChangeListener;
 import twitch.hunsterverse.net.Launcher;
+import twitch.hunsterverse.net.database.documents.ActiveEmbed;
+import twitch.hunsterverse.net.database.documents.HVStreamer;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
 
 public class JsonDB {
 
 	public static String dbFilesLocation = Launcher.uwd  + File.separator + "hvstreambot" + File.separator + "database";
-	private static String baseScanPackage = "twitch.hunsterverse.net.database";
+	private static String baseScanPackage = "twitch.hunsterverse.net.database.documents";
 	public static JsonDBTemplate database;
 	
 	public static void init() {
@@ -23,6 +25,10 @@ public class JsonDB {
 		
 		if (!database.collectionExists(HVStreamer.class)) {
 			database.createCollection(HVStreamer.class);
+		}
+		
+		if (!database.collectionExists(ActiveEmbed.class)) {
+			database.createCollection(ActiveEmbed.class);
 		}
 		
 		database.addCollectionFileChangeListener(new CollectionFileChangeListener() {

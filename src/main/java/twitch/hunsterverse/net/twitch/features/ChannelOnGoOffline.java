@@ -3,8 +3,8 @@ package twitch.hunsterverse.net.twitch.features;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
-import twitch.hunsterverse.net.database.HVStreamer;
 import twitch.hunsterverse.net.database.JsonDB;
+import twitch.hunsterverse.net.database.documents.HVStreamer;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 import twitch.hunsterverse.net.discord.commands.CommandUtils;
 import twitch.hunsterverse.net.logger.Logger;
@@ -32,7 +32,8 @@ public class ChannelOnGoOffline {
 		JsonDB.database.upsert(s);
 		
 		DiscordUtils.setBotStatus((TwitchUtils.getLiveChannels().size()) + " streamer(s)");
-//		DiscordUtils.sendRelayMessage(s.getDiscordName() + " [" + s.getTwitchChannel() + "]" + " is now offline.");
+		DiscordUtils.updateLiveEmbeds();
+		
 	}
 	
 	

@@ -3,8 +3,8 @@ package twitch.hunsterverse.net.twitch;
 import java.util.ArrayList;
 import java.util.List;
 
-import twitch.hunsterverse.net.database.HVStreamer;
 import twitch.hunsterverse.net.database.JsonDB;
+import twitch.hunsterverse.net.database.documents.HVStreamer;
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
 
 public class TwitchUtils {
