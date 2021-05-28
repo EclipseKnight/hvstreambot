@@ -46,7 +46,7 @@ public class DiscordUtils {
 		JsonDB.database.upsert(ae);
 	}
 	
-	public static void updateLiveEmbeds() {
+	public static void updateLiveEmbeds(boolean force) {
 		
 		Logger.log(Level.WARN, "Updating embeds...");
 		
@@ -55,10 +55,15 @@ public class DiscordUtils {
 		
 		List<ActiveEmbed> aes = JsonDB.database.getCollection(ActiveEmbed.class);
 		List<String> liveChannels = TwitchUtils.getLiveChannels();
+		
 		if (liveChannels.size() <= 0) {
 			Logger.log(Level.INFO, "No live channels.");
-			return;
+			if (!force) return;
+			
+			Logger.log(Level.WARN, "flag set to force. Forcing update...");
 		}
+		
+		
 		
 		int fieldCount = liveChannels.size();
 		final int numOfEmbeds = (int) (1 + (Math.ceil(fieldCount / 25.0) - 1));

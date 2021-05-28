@@ -41,6 +41,6 @@ public class ChannelOnGoLive {
 		// Update bot streamer count.
 		DiscordUtils.setBotStatus((TwitchUtils.getLiveChannels().size()+1) + " streamer(s)");
 		
-		DiscordUtils.updateLiveEmbeds();
+		DiscordUtils.updateLiveEmbeds(false);
 	}
 }

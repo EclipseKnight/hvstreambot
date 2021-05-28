@@ -121,7 +121,7 @@ public class DiscordBot {
 		if (embeds.isEmpty()) {
 			DiscordUtils.createLiveEmbed();
 		}
-		DiscordUtils.updateLiveEmbeds();
+		DiscordUtils.updateLiveEmbeds(true);
 	}
 
 	private void registerCommands(CommandClientBuilder builder) {

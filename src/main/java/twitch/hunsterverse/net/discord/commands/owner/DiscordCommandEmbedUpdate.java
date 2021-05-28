@@ -25,7 +25,7 @@ public class DiscordCommandEmbedUpdate extends Command {
 				Updating embeds...
 				```
 				"""));
-		DiscordUtils.updateLiveEmbeds();
+		DiscordUtils.updateLiveEmbeds(true);
 		event.reply(String.format("""
 				```yaml
 				Finished updating...
