@@ -124,7 +124,7 @@ public class DiscordUtils {
 		int remainFields = fieldCount;
 		int activeEmbedIndex = 0;
 		int channelIndex = 0;
-		while (remainFields > 0 && activeEmbedIndex < numOfEmbeds) {
+		while (/*remainFields > 0 &&*/ activeEmbedIndex < numOfEmbeds) {
 			
 			ActiveEmbed ae = aes.get(activeEmbedIndex);
 			
@@ -152,6 +152,10 @@ public class DiscordUtils {
 				
 				i++;
 				channelIndex++;
+			}
+			
+			if (liveChannels.size() <= 0) {
+				eb.setTitle("[" + (activeEmbedIndex+1) + "/" + numOfEmbeds + "] Live Hunsterverse Streamers (" + liveChannels.size() + " live)");
 			}
 			updatedEmbeds.add(eb.build());
 			remainFields -= i;
