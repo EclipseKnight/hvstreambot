@@ -58,15 +58,16 @@ public class DiscordUtils {
 		
 		if (liveChannels.size() <= 0) {
 			Logger.log(Level.INFO, "No live channels.");
-			if (!force) return;
 			
+			if (!force) return;
 			Logger.log(Level.WARN, "flag set to force. Forcing update...");
 		}
 		
 		
-		
 		int fieldCount = liveChannels.size();
-		final int numOfEmbeds = (int) (1 + (Math.ceil(fieldCount / 25.0) - 1));
+		int numOfEmbeds = (int) Math.ceil(fieldCount / 25.0);
+		
+		if (numOfEmbeds <= 0) numOfEmbeds++;
 		
 		Logger.log(Level.WARN, numOfEmbeds + " active embeds are needed.");
 		
@@ -123,7 +124,7 @@ public class DiscordUtils {
 		int remainFields = fieldCount;
 		int activeEmbedIndex = 0;
 		int channelIndex = 0;
-		while (remainFields > 0 && activeEmbedIndex <= numOfEmbeds) {
+		while (remainFields > 0 && activeEmbedIndex < numOfEmbeds) {
 			
 			ActiveEmbed ae = aes.get(activeEmbedIndex);
 			
@@ -158,9 +159,11 @@ public class DiscordUtils {
 			Logger.log(Level.INFO, "Updating embed " + activeEmbedIndex);
 		}
 		
+		
 		activeEmbedIndex = 0;
-		while (activeEmbedIndex < numOfEmbeds) {
+		while (activeEmbedIndex < numOfEmbeds && updatedEmbeds.size() > 0) {
 			ActiveEmbed ae = aes.get(activeEmbedIndex);
+			System.out.println(aes.size() + ":" + updatedEmbeds.size());
 			DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).editMessageById(ae.getMessageId(), updatedEmbeds.get(activeEmbedIndex)).complete();
 			activeEmbedIndex++;
 		}
