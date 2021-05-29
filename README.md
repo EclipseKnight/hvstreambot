@@ -4,9 +4,16 @@ This is a stream bot application design for the discord server Hunsterverse.
 
 
 ## Requirements
-- jdk 15 or openjdk 15 
+- Orace JDK 15 or OpenJDK 15 minimum
 
 
+[Latest openjdk](https://jdk.java.net/)
+
+[Latest Oracle JDK](https://www.oracle.com/java/technologies/javase-downloads.html)
+
+Note that thanks to backwards compatability, the latest jdk will run older versions just fine. 
+
+For linux installation of openjdk [read here](https://openjdk.java.net/install/) for more info... [or here](https://www.linuxuprising.com/2020/09/how-to-install-oracle-java-15-on-ubuntu.html)... and [here](https://aboullaite.me/switching-between-java-versions-on-ubuntu-linux/) for info on how to manage multiple installed versions. Just look up how for your specific distro.
 ## Usage
 
 ```bash
