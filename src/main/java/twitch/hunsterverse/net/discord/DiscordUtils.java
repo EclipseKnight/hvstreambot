@@ -35,14 +35,14 @@ public class DiscordUtils {
 		EmbedBuilder eb = new EmbedBuilder();
 		eb.setColor(DiscordBot.jda.getGuildById(DiscordBot.configuration.getGuildId()).getRoleById(DiscordBot.configuration.getStreamRoleId()).getColorRaw());
 		eb.setTitle("Live Hunsterverse Streamers");
-		eb.setFooter("Bot created by Eclipse <a:vibecat:846079569600446466>");
+		eb.setFooter("Bot created by Eclipse <a:vibecat:743546134584229889>");
 		
 		//Send the message
-		DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage(eb.build()).complete();
+		Message m = DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage(eb.build()).complete();
 		
 		//Grab it's id and set it to the active embed doc
 		try {
-			ae.setMessageId(DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).getLatestMessageId());
+			ae.setMessageId(m.getId());
 		} catch (IllegalStateException e) {
 			Logger.log(Level.ERROR, "No last message id found.");
 		}

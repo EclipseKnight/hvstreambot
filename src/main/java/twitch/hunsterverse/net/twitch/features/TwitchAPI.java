@@ -13,7 +13,10 @@ import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 
+import twitch.hunsterverse.net.logger.Logger;
+import twitch.hunsterverse.net.logger.Logger.Level;
 import twitch.hunsterverse.net.twitch.TwitchBot;
 
 public class TwitchAPI {
@@ -70,7 +73,17 @@ public class TwitchAPI {
 		if (channel == null)
 			return false;
 		
-		UserList list = TwitchBot.twitchClient.getHelix().getUsers(null, null, Collections.singletonList(channel)).execute();
+		UserList list = null;
+		try {
+			list = TwitchBot.twitchClient.getHelix().getUsers(null, null, Collections.singletonList(channel)).execute();
+		} catch (HystrixRuntimeException e) {
+			Logger.log(Level.ERROR, "Invalid user");
+		}
+		
+		if (list == null) {
+			return false;
+		}
+		
 		if (list.getUsers().size() > 0 && list.getUsers().get(0).getLogin().equalsIgnoreCase(channel)) {
 			return true;
 		}

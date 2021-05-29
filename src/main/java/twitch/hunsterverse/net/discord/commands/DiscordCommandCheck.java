@@ -40,18 +40,25 @@ public class DiscordCommandCheck extends Command {
 		if (CommandUtils.isValidSnowflake(discordId)) {
 			
 			// query for snowflake in db and check for active link.
-			if (CommandUtils.getUserWithDiscordId(discordId) != null 
-					&& CommandUtils.getUserWithDiscordId(discordId).isLinked()) {
+			if (CommandUtils.getUserWithDiscordId(discordId) != null) {
 				
 				HVStreamer s = CommandUtils.getUserWithDiscordId(discordId);
 				
 				DiscordUtils.sendMessage(event, String.format("""
 						```yaml
-						Check Results... | User: %s | TwitchChannel: %s | affiliate: %s
+						Check Results... | User: %s | TwitchChannel: %s | affiliate: %s | linked: %s
 						```
-						""", "<@"+discordId+">", s.getTwitchChannel(), s.isAffiliate()), false);
+						""", "<@"+discordId+">", s.getTwitchChannel(), s.isAffiliate(), s.isLinked()), false);
 				return;
-			}	
+			}
+			
+			DiscordUtils.sendTimedMessaged(event, """
+					```yaml
+					Invalid Arguments: Channel or user does not exist.
+					```
+					""", 10000, false);
+			
+			return;
 		} 
 		
 		// Check if channel exists
@@ -64,9 +71,9 @@ public class DiscordCommandCheck extends Command {
 
 				DiscordUtils.sendMessage(event, String.format("""
 						```yaml
-						Check Results... | User: %s | TwitchChannel: %s | affiliate: %s
+						Check Results... | User: %s | TwitchChannel: %s | affiliate: %s | linked: %s
 						```
-						""", "<@"+discordId+">", s.getTwitchChannel(), s.isAffiliate()), false);
+						""", "<@"+discordId+">", s.getTwitchChannel(), s.isAffiliate(), s.isLinked()), false);
 				return;
 			}
 		}
