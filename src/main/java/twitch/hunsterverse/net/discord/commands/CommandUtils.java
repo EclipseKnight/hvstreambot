@@ -24,6 +24,11 @@ public class CommandUtils {
 		boolean result = true;
 		String reply = "";
 		
+		//bypass if the user is an owner or co-owner.
+		if (isOwner(event)) {
+			return true;
+		}
+		
 		if (!isFeatureEnabled(feature)) {
 			reply += "Command is disabled. ";
 			result = false;
@@ -49,6 +54,22 @@ public class CommandUtils {
 		}
 		
 		return result;
+	}
+	
+	//is user owner or co-owner.
+	public static boolean isOwner(CommandEvent event) {
+		String userId = event.getAuthor().getId();
+		if (userId == DiscordBot.configuration.getOwnerId()) {
+			return true;
+		}
+		
+		for (String id: DiscordBot.configuration.getCoOwnerIds()) {
+			if (userId == id) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
