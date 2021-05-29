@@ -38,7 +38,7 @@ More information in the discordbot.yaml and twitchbot.yaml files.
 - Ability to track link users to a twitch account and actively track their status (live or offline). Stored in a JSON formatted database
 - Manual and scheduled database backups and path configuration.
 - full feature configuration. Channel usage, role usage, ability to enable and disable certain commands. 
-
+- Affiliate parameter to allow affiliate only command usage. Implemented for use with future expansions to this bot.
 ## Other tools
 
 [hvstreambotupdater](https://github.com/EclipseKnight/hvstreambotupdater) - lets you update the bot by fetching the latest release from the repo. Update command is disabled due to inconsistencies between OS
