@@ -45,7 +45,7 @@ public class CommandUtils {
 		}
 		
 		if (!reply.isEmpty()) {
-			DiscordUtils.sendTimedMessaged(event, reply, 6000, false);
+			DiscordUtils.sendTimedMessaged(event, reply, 10000, false);
 		}
 		
 		return result;

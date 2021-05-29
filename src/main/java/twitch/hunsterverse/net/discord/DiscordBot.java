@@ -28,6 +28,7 @@ import twitch.hunsterverse.net.discord.commands.DiscordCommandCheck;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandHelp;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandLink;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandUnlink;
+import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandBackup;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandEmbedUpdate;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandRestart;
 import twitch.hunsterverse.net.discord.commands.owner.config.DiscordCommandConfiguration;
@@ -134,7 +135,8 @@ public class DiscordBot {
 				new DiscordCommandCheck(),
 				new DiscordCommandLink(),
 				new DiscordCommandUnlink(),
-				new DiscordCommandEmbedUpdate()
+				new DiscordCommandEmbedUpdate(),
+				new DiscordCommandBackup()
 //				new DiscordCommandUpdate() TODO fix update for linux. As of now just manually run updater.
 				);
 		

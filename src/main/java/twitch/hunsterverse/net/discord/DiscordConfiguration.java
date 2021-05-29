@@ -15,6 +15,8 @@ public class DiscordConfiguration {
 
 	private Map<String, String> api;
 	
+	private Map<String, String> database;
+	
 	private String ownerId;
 	
 	private List<String> coOwnerIds;
@@ -41,6 +43,14 @@ public class DiscordConfiguration {
 
 	public void setApi(Map<String, String> api) {
 		this.api = api;
+	}
+	
+	public Map<String, String> getDatabase() {
+		return database;
+	}
+	
+	public void setDatabase(Map<String, String> database) {
+		this.database = database;
 	}
 	
 	public String getOwnerId() {

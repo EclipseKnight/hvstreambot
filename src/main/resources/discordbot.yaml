@@ -21,6 +21,19 @@ api:
     # Discord Application Client Token
     discord_client_token: 
 
+database:
+    # enabled or disable scheduled backups.
+    backup_enabled: true
+
+    # How frequently the database is backed up. Unit x many Hours.
+    backup_interval: 2
+    
+    # Path to store database backups. Left empty = Default path is within the generated folder.     
+    backup_path: 
+    
+    # channel to output backup logs in discord. null to not output.
+    backup_log_channel: null
+    
 #required for bot setup.
 owner_id: 
 
@@ -31,7 +44,7 @@ co_owner_ids:
 #required for sending messages in some cases
 guild_id:
 
-#required for the bot to know what role to assigned linked users.
+#required for the bot to know what role to assign linked users.
 stream_role_id:
 
 #required for the bot to post the active live stream embed
@@ -124,12 +137,23 @@ features:
       linked: false
       affiliate: false
       name: embedupdate
-      aliases: []
-      description: "updates the live stream active embeds."
+      description: "embedUpdate - updates the live stream active embeds."
       channels:
          - null
       roles:
          - null
+         
+   #for updating live stream active embed     
+   discord_command_backup: 
+      enabled: true
+      linked: false
+      affiliate: false
+      name: backup
+      description: "backup - initiates a database backup manually. (Does not affect scheduled backups)"
+      channels:
+         - null
+      roles:
+         - null         
          
    #mainly an example command that checks if channel is live.
    discord_command_is_live: 

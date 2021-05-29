@@ -24,5 +24,9 @@ public class Launcher {
 		twitchBot.start();
 		
 		discordBot = new DiscordBot();
+		
+		// initialize scheduled backups after discord bot creation. 
+		// This utilizes the discord bot configuration file instead of a separate config.
+		JsonDB.initScheduledBackups();
 	}
 }

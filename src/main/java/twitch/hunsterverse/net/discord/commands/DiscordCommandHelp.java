@@ -18,7 +18,8 @@ public class DiscordCommandHelp implements Consumer<CommandEvent> {
 				"discord_command_link",
 				"discord_command_unlink",
 				"discord_command_is_live",
-				"discord_command_embed_update"
+				"discord_command_embed_update",
+				"discord_command_backup"
 				};
 		
 		String message = "```yaml\nCommands you can use:\n";

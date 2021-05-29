@@ -41,7 +41,11 @@ public class DiscordUtils {
 		DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage(eb.build()).complete();
 		
 		//Grab it's id and set it to the active embed doc
-		ae.setMessageId(DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).getLatestMessageId());
+		try {
+			ae.setMessageId(DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).getLatestMessageId());
+		} catch (IllegalStateException e) {
+			Logger.log(Level.ERROR, "No last message id found.");
+		}
 		//Upsert to database.
 		JsonDB.database.upsert(ae);
 	}

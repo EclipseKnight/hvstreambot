@@ -12,7 +12,6 @@ public class DiscordCommandEmbedUpdate extends Command {
 	final String feature = "discord_command_embed_update";
 	public DiscordCommandEmbedUpdate() {
 		this.name = DiscordBot.configuration.getFeatures().get(feature).getName();
-	
 	}
 	
 	@Override
