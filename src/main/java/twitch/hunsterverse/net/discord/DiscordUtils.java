@@ -149,6 +149,7 @@ public class DiscordUtils {
 			while (i < 25 && i < remainFields) {
 				String ch = liveChannels.get(channelIndex);
 				Stream s = TwitchAPI.getTwitchStream(ch);
+				
 				HVStreamer hv = CommandUtils.getUserWithTwitchChannel(ch);
 				String game = TwitchAPI.getGameName(s.getGameId());
 				eb.addField(s.getUserName() + "[" + hv.getDiscordName() + "]", game+": ["+s.getTitle()+"]("+TwitchUtils.getTwitchChannelUrl(ch)+")", false);

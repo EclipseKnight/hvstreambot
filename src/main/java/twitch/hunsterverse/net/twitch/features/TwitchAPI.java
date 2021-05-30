@@ -24,7 +24,7 @@ public class TwitchAPI {
 	/**
 	 * Temporary fix for twitch online/offline events double firing. 
 	 */
-	public static final Cache<String, Boolean> recentlyOffline = Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES).build();
+	public static final Cache<String, Boolean> recentlyOffline = Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
 	
 	public static String lastEmbed = "";
 	
@@ -34,7 +34,7 @@ public class TwitchAPI {
 	 * @return a boolean. true if live, else false.
 	 */
 	public static boolean isLive(String username) {
-		StreamList resultList = TwitchBot.twitchClient.getHelix().getStreams(null, null, null, 5, null, null, null, Collections.singletonList(username)).execute();	
+		StreamList resultList = TwitchBot.twitchClient.getHelix().getStreams(null, null, null, 2, null, null, null, Collections.singletonList(username)).execute();	
 		
 		if (resultList.getStreams().size() > 0 && "live".equals(resultList.getStreams().get(0).getType())) {
 			return true; 
@@ -121,11 +121,13 @@ public class TwitchAPI {
 	 * @return
 	 */
 	public static Stream getTwitchStream(String username) {
-		StreamList list = TwitchBot.twitchClient.getHelix().getStreams(null, null, null, 5, null, null, null, Collections.singletonList(username)).execute();	
+		StreamList list = TwitchBot.twitchClient.getHelix().getStreams(null, null, null, 2, null, null, null, Collections.singletonList(username)).execute();	
 		
 		if (list.getStreams().size() > 0 && list.getStreams().get(0).getUserName().equalsIgnoreCase(username)) {
 			return list.getStreams().get(0);
 		}
+		
+		Logger.log(Level.ERROR, "No active stream: " + username);
 		return null;
 	}
 	

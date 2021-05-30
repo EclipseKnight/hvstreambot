@@ -18,6 +18,7 @@ public class HVStreamer {
 	private boolean streaming;
 	
 	
+	
 	public String getDiscordId() {
 		return discordId;
 	}

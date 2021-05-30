@@ -14,8 +14,6 @@ import twitch.hunsterverse.net.logger.Logger.Level;
 import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class ChannelOnGoLive {
-
-	String feature = "discord_message_relay";
 	
 	public ChannelOnGoLive(SimpleEventHandler eventHandler) {
 		eventHandler.onEvent(ChannelGoLiveEvent.class, event -> onGoLive(event));
@@ -29,7 +27,12 @@ public class ChannelOnGoLive {
 		EventChannel channel = event.getChannel();
 		Stream stream = event.getStream();
 		
-		if (TwitchAPI.recentlyOffline.getIfPresent(channel.getId()) == true) return;
+		Boolean pres = TwitchAPI.recentlyOffline.getIfPresent(channel.getId());
+		
+		if (pres != null && pres == true) {
+			Logger.log(Level.INFO, "Found in cache. Stopping event.");
+			return;
+		}
 		
 		Logger.log(Level.INFO, stream.getUserName() + " is now live.");
 		
@@ -39,7 +42,7 @@ public class ChannelOnGoLive {
 		JsonDB.database.upsert(s);
 		
 		// Update bot streamer count.
-		DiscordUtils.setBotStatus((TwitchUtils.getLiveChannels().size()+1) + " streamer(s)");
+		DiscordUtils.setBotStatus((TwitchUtils.getLiveChannels().size()) + " streamer(s)");
 		
 		DiscordUtils.updateLiveEmbeds(false);
 	}
