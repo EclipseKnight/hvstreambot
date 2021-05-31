@@ -24,12 +24,14 @@ public class DiscordCommandEmbedUpdate extends Command {
 				Updating embeds...
 				```
 				"""));
+		long start = System.currentTimeMillis();
 		DiscordUtils.updateLiveEmbeds(true);
+		long result = System.currentTimeMillis() - start;
 		event.reply(String.format("""
 				```yaml
-				Finished updating...
+				Finished updating... Time taken (MS): %s
 				```
-				"""));
+				""", result));
 	}
 
 }

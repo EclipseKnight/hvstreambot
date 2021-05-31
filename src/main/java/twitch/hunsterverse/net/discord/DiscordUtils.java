@@ -9,6 +9,7 @@ import com.github.twitch4j.helix.domain.Stream;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Activity.ActivityType;
 import net.dv8tion.jda.api.entities.Message;
@@ -35,7 +36,7 @@ public class DiscordUtils {
 		EmbedBuilder eb = new EmbedBuilder();
 		eb.setColor(DiscordBot.jda.getGuildById(DiscordBot.configuration.getGuildId()).getRoleById(DiscordBot.configuration.getStreamRoleId()).getColorRaw());
 		eb.setTitle("Live Hunsterverse Streamers");
-		eb.setFooter("Bot created by Eclipse <a:vibecat:743546134584229889>");
+		eb.setFooter("Bot created by Eclipse <:feelsokayman:334964950772744202>");
 		
 		//Send the message
 		Message m = DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage(eb.build()).complete();
@@ -53,6 +54,7 @@ public class DiscordUtils {
 	public static void updateLiveEmbeds(boolean force) {
 		
 		Logger.log(Level.WARN, "Updating embeds...");
+		long start = System.currentTimeMillis();
 		
 		String guildId = DiscordBot.configuration.getGuildId();
 		String channelId = DiscordBot.configuration.getLiveEmbedChannel();
@@ -152,7 +154,7 @@ public class DiscordUtils {
 				
 				HVStreamer hv = CommandUtils.getUserWithTwitchChannel(ch);
 				String game = TwitchAPI.getGameName(s.getGameId());
-				eb.addField(s.getUserName() + "[" + hv.getDiscordName() + "]", game+": ["+s.getTitle()+"]("+TwitchUtils.getTwitchChannelUrl(ch)+")", false);
+				eb.addField("<a:livesmall:848591733658615858> " + s.getUserName() + "[" + hv.getDiscordName() + "]", " <:arrowquest:804000542678056980> :video_game: " +game+": ["+s.getTitle()+"]("+TwitchUtils.getTwitchChannelUrl(ch)+")", false);
 				eb.setTitle("[" + (activeEmbedIndex+1) + "/" + numOfEmbeds + "] Live Hunsterverse Streamers (" + liveChannels.size() + " live)");
 				
 				i++;
@@ -177,7 +179,8 @@ public class DiscordUtils {
 			activeEmbedIndex++;
 		}
 		
-		Logger.log(Level.SUCCESS, "Finished updating embeds...");
+		long result = System.currentTimeMillis() - start;
+		Logger.log(Level.SUCCESS, "Finished updating embeds... Time taken (MS): " + result);
 	}
 	
 	public static void sendTimedMessaged(CommandEvent event, String message, int ms, boolean isPrivate) {
@@ -277,6 +280,7 @@ public class DiscordUtils {
 	
 	public static void setBotStatus(String status) {
 		DiscordBot.jda.getPresence().setActivity(Activity.of(ActivityType.STREAMING, status));
+		DiscordBot.jda.getPresence().setStatus(OnlineStatus.IDLE);
 	}
 
 	

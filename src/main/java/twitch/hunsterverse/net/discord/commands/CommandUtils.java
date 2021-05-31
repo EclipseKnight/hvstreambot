@@ -58,13 +58,13 @@ public class CommandUtils {
 	
 	//is user owner or co-owner.
 	public static boolean isOwner(CommandEvent event) {
-		String userId = event.getAuthor().getId();
-		if (userId == DiscordBot.configuration.getOwnerId()) {
+		String userId = event.getMember().getId();
+		if (userId.equals(DiscordBot.configuration.getOwnerId())) {
 			return true;
 		}
 		
 		for (String id: DiscordBot.configuration.getCoOwnerIds()) {
-			if (userId == id) {
+			if (userId.equals(id)) {
 				return true;
 			}
 		}
