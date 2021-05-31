@@ -36,7 +36,7 @@ public class DiscordUtils {
 		EmbedBuilder eb = new EmbedBuilder();
 		eb.setColor(DiscordBot.jda.getGuildById(DiscordBot.configuration.getGuildId()).getRoleById(DiscordBot.configuration.getStreamRoleId()).getColorRaw());
 		eb.setTitle("Live Hunsterverse Streamers");
-		eb.setFooter("Bot created by Eclipse <:feelsokayman:334964950772744202>");
+		eb.setFooter("Bot created by Eclipse");
 		
 		//Send the message
 		Message m = DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage(eb.build()).complete();
@@ -181,6 +181,11 @@ public class DiscordUtils {
 		
 		long result = System.currentTimeMillis() - start;
 		Logger.log(Level.SUCCESS, "Finished updating embeds... Time taken (MS): " + result);
+		DiscordUtils.setBotStatus(TwitchUtils.getLiveChannels().size() + " streamer(s)");
+		
+		DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("<:pepegaslam:595804056941887489>").queue((m) -> {
+			m.delete().queue();
+		});
 	}
 	
 	public static void sendTimedMessaged(CommandEvent event, String message, int ms, boolean isPrivate) {

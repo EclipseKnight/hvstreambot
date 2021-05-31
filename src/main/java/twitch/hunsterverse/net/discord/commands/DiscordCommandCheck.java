@@ -73,7 +73,7 @@ public class DiscordCommandCheck extends Command {
 						```yaml
 						Check Results... | User: %s | TwitchChannel: %s | affiliate: %s | linked: %s
 						```
-						""", "<@"+discordId+">", s.getTwitchChannel(), s.isAffiliate(), s.isLinked()), false);
+						""", "<@"+s.getDiscordId()+">", s.getTwitchChannel(), s.isAffiliate(), s.isLinked()), false);
 				return;
 			}
 		}

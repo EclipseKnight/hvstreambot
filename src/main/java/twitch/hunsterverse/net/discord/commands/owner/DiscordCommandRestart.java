@@ -24,7 +24,7 @@ public class DiscordCommandRestart extends Command {
 		
 		DiscordUtils.sendTimedMessaged(event, """
 				```yaml
-				Invalid Arguments: restart [twitch, disord]
+				Invalid Arguments: restart [twitch, discord]
 				```
 				""", 10000, false);
 	}

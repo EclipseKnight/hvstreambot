@@ -10,6 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.security.auth.login.LoginException;
 
@@ -63,6 +66,12 @@ public class DiscordBot {
 	private ArrayList<GatewayIntent> intents = new ArrayList<>();
 	
 	
+	/**
+	 * scheduler for timed tasks
+	 */
+	private final static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	
+	
 	public DiscordBot() {
 		// Load Configuration
 		loadConfiguration();
@@ -112,12 +121,27 @@ public class DiscordBot {
 		//to start active stream embeds.
 		startActiveStreamEmbed();
 		
+		//start scheduled updates.
+		initScheduledEmbedUpdates();
+		
 		// For displaying current number of live streamer as a status. 
 		DiscordUtils.setBotStatus(TwitchUtils.getLiveChannels().size() + " streamer(s)");
 		jda.getSelfUser().getManager().setName(configuration.getBot().get("name"));
 	
+		
 	}
 	
+	private void initScheduledEmbedUpdates() {
+		DiscordBot.scheduler.scheduleAtFixedRate(new Runnable() {
+
+			@Override
+			public void run() {
+				DiscordUtils.updateLiveEmbeds(false);
+			}
+			
+		}, 5, 5, TimeUnit.MINUTES);
+	}
+
 	private void startActiveStreamEmbed() {
 		List<ActiveEmbed> embeds = JsonDB.database.getCollection(ActiveEmbed.class);
 		if (embeds.isEmpty()) {

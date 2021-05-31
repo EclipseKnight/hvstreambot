@@ -5,6 +5,7 @@ import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 import twitch.hunsterverse.net.discord.commands.CommandUtils;
 import twitch.hunsterverse.net.logger.Logger;
@@ -27,6 +28,8 @@ public class ChannelOnGoOffline {
 		TwitchAPI.recentlyOffline.put(event.getChannel().getId(), true);
 		
 		Logger.log(Level.INFO, event.getChannel().getName() + " is now offline.");
+		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), event.getChannel().getName() + " is now offline.");
+		
 		HVStreamer s = CommandUtils.getUserWithTwitchChannel(event.getChannel().getName());
 		s.setStreaming(false);
 		JsonDB.database.upsert(s);

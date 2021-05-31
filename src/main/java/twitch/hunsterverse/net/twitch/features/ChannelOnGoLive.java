@@ -7,6 +7,7 @@ import com.github.twitch4j.helix.domain.Stream;
 
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 import twitch.hunsterverse.net.discord.commands.CommandUtils;
 import twitch.hunsterverse.net.logger.Logger;
@@ -24,6 +25,8 @@ public class ChannelOnGoLive {
 	 * @param event
 	 */
 	public void onGoLive(ChannelGoLiveEvent event) {
+		
+		
 		EventChannel channel = event.getChannel();
 		Stream stream = event.getStream();
 		
@@ -35,6 +38,7 @@ public class ChannelOnGoLive {
 		}
 		
 		Logger.log(Level.INFO, stream.getUserName() + " is now live.");
+		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), stream.getUserName() + " is now live.");
 		
 		// Set user to streaming.
 		HVStreamer s = CommandUtils.getUserWithTwitchChannel(channel.getName());
