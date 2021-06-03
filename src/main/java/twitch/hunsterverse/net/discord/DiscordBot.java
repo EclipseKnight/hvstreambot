@@ -136,10 +136,10 @@ public class DiscordBot {
 
 			@Override
 			public void run() {
-				DiscordUtils.updateLiveEmbeds(false);
+				DiscordUtils.updateLiveEmbeds(true);
 			}
 			
-		}, 5, 5, TimeUnit.MINUTES);
+		}, 10, 10, TimeUnit.MINUTES);
 	}
 
 	private void startActiveStreamEmbed() {
@@ -202,7 +202,7 @@ public class DiscordBot {
     /**
      * Generates config file.
      */
-    public static void generateConfig() {
+    public static void generateConfig() {   	
     	
         try {
         	Logger.log(Level.WARN, "Missing discordbot.yaml. Generating new config...");
