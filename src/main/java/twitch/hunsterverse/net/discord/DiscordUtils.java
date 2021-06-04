@@ -2,6 +2,7 @@ package twitch.hunsterverse.net.discord;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -51,16 +52,42 @@ public class DiscordUtils {
 		JsonDB.database.upsert(ae);
 	}
 	
+	private static List<String> recentLiveChannels = null;
+	
 	public static void updateLiveEmbeds(boolean force) {
+		
 		
 		Logger.log(Level.WARN, "Updating embeds...");
 		long start = System.currentTimeMillis();
-		
+		long result = -1;
 		String guildId = DiscordBot.configuration.getGuildId();
 		String channelId = DiscordBot.configuration.getLiveEmbedChannel();
 		
 		List<ActiveEmbed> aes = JsonDB.database.getCollection(ActiveEmbed.class);
 		List<String> liveChannels = TwitchUtils.getLiveChannels();
+		
+		//Perform a check to see if there is a change to the live channels. 
+		if (recentLiveChannels != null) {
+			Collections.sort(recentLiveChannels);
+			Collections.sort(liveChannels);
+			
+			if (recentLiveChannels.equals(liveChannels)) {
+				recentLiveChannels.clear();
+				recentLiveChannels.addAll(liveChannels);
+				
+				result = System.currentTimeMillis() - start;
+				Logger.log(Level.WARN, "No change in live channels. Skipping update. Time taken (MS): " + result);
+				
+				return;
+			}
+			
+			recentLiveChannels.clear();
+			recentLiveChannels.addAll(liveChannels);
+			
+		} else {
+			recentLiveChannels = new ArrayList<String>();
+			recentLiveChannels.addAll(liveChannels);
+		}
 		
 		if (liveChannels.size() <= 0) {
 			Logger.log(Level.INFO, "No live channels.");
@@ -130,7 +157,7 @@ public class DiscordUtils {
 		int remainFields = fieldCount;
 		int activeEmbedIndex = 0;
 		int channelIndex = 0;
-		while (/*remainFields > 0 &&*/ activeEmbedIndex < numOfEmbeds) {
+		while (activeEmbedIndex < numOfEmbeds) {
 			
 			ActiveEmbed ae = aes.get(activeEmbedIndex);
 			
@@ -179,9 +206,11 @@ public class DiscordUtils {
 			activeEmbedIndex++;
 		}
 		
-		long result = System.currentTimeMillis() - start;
+		result = System.currentTimeMillis() - start;
 		Logger.log(Level.SUCCESS, "Finished updating embeds... Time taken (MS): " + result);
 		DiscordUtils.setBotStatus(TwitchUtils.getLiveChannels().size() + " streamer(s)");
+		
+		
 		
 		DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("<:pepegaslam:595804056941887489>").queue((m) -> {
 			m.delete().queue();
