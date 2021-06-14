@@ -67,7 +67,8 @@ public class DiscordUtils {
 		List<String> liveChannels = TwitchUtils.getLiveChannels();
 		
 		//Perform a check to see if there is a change to the live channels. 
-		if (recentLiveChannels != null) {
+		//If force, update anyways.
+		if (recentLiveChannels != null && !force) {
 			Collections.sort(recentLiveChannels);
 			Collections.sort(liveChannels);
 			

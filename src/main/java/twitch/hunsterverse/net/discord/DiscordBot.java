@@ -139,7 +139,7 @@ public class DiscordBot {
 				DiscordUtils.updateLiveEmbeds(true);
 			}
 			
-		}, 10, 10, TimeUnit.MINUTES);
+		}, 15, 15, TimeUnit.MINUTES);
 	}
 
 	private void startActiveStreamEmbed() {
