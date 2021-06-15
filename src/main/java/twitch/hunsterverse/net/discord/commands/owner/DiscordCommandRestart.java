@@ -22,7 +22,7 @@ public class DiscordCommandRestart extends Command {
 			return;
 		}
 		
-		DiscordUtils.sendTimedMessaged(event, """
+		DiscordUtils.sendTimedMessage(event, """
 				```yaml
 				Invalid Arguments: restart [twitch, discord]
 				```

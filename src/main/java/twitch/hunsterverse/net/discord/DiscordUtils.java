@@ -1,6 +1,7 @@
 package twitch.hunsterverse.net.discord;
 
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +21,7 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.ActiveEmbed;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.database.documents.HVUser;
 import twitch.hunsterverse.net.discord.commands.CommandUtils;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
@@ -52,8 +54,13 @@ public class DiscordUtils {
 		JsonDB.database.upsert(ae);
 	}
 	
+	//cached recent list for updateLiveEmbeds
 	private static List<String> recentLiveChannels = null;
 	
+	/**
+	 * Update the active embeds.
+	 * @param force true if you want to bypass any exits and force update the embeds.
+	 */
 	public static void updateLiveEmbeds(boolean force) {
 		
 		
@@ -65,6 +72,8 @@ public class DiscordUtils {
 		
 		List<ActiveEmbed> aes = JsonDB.database.getCollection(ActiveEmbed.class);
 		List<String> liveChannels = TwitchUtils.getLiveChannels();
+		
+		boolean newLiveStreamer = false;
 		
 		//Perform a check to see if there is a change to the live channels. 
 		//If force, update anyways.
@@ -80,6 +89,10 @@ public class DiscordUtils {
 				Logger.log(Level.WARN, "No change in live channels. Skipping update. Time taken (MS): " + result);
 				
 				return;
+			}
+			
+			if (recentLiveChannels.size() < liveChannels.size()) {
+				newLiveStreamer = true;
 			}
 			
 			recentLiveChannels.clear();
@@ -141,7 +154,7 @@ public class DiscordUtils {
 			try {
 				m = DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).retrieveMessageById(ae.getMessageId()).complete();
 			} catch (ErrorResponseException e) {
-				Logger.log(Level.FATAL, "Discord error: " + e.getErrorCode());
+				Logger.log(Level.ERROR, "Discord error: " + e.getErrorCode());
 				Logger.log(Level.WARN, "10008 indicates unknown message. This is to inform you it is handled.");
 			}
 			
@@ -154,6 +167,7 @@ public class DiscordUtils {
 			}
 		}
 		
+		//Update loop
 		List<MessageEmbed> updatedEmbeds = new ArrayList<MessageEmbed>();
 		int remainFields = fieldCount;
 		int activeEmbedIndex = 0;
@@ -180,7 +194,7 @@ public class DiscordUtils {
 				String ch = liveChannels.get(channelIndex);
 				Stream s = TwitchAPI.getTwitchStream(ch);
 				
-				HVStreamer hv = CommandUtils.getUserWithTwitchChannel(ch);
+				HVStreamer hv = CommandUtils.getStreamerWithTwitchChannel(ch);
 				String game = TwitchAPI.getGameName(s.getGameId());
 				eb.addField("<a:livesmall:848591733658615858> " + s.getUserName() + "[" + hv.getDiscordName() + "]", " <:arrowquest:804000542678056980> :video_game: " +game+": ["+s.getTitle()+"]("+TwitchUtils.getTwitchChannelUrl(ch)+")", false);
 				eb.setTitle("[" + (activeEmbedIndex+1) + "/" + numOfEmbeds + "] Live Hunsterverse Streamers (" + liveChannels.size() + " live)");
@@ -207,18 +221,102 @@ public class DiscordUtils {
 			activeEmbedIndex++;
 		}
 		
+		//If a new streamer went live then highlight channel.
+		if (newLiveStreamer) {
+			DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("<:pepegaslam:595804056941887489>").queue((m) -> {
+				m.delete().queue();
+			});
+		}
+		
 		result = System.currentTimeMillis() - start;
 		Logger.log(Level.SUCCESS, "Finished updating embeds... Time taken (MS): " + result);
 		DiscordUtils.setBotStatus(TwitchUtils.getLiveChannels().size() + " streamer(s)");
-		
-		
-		
-		DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("<:pepegaslam:595804056941887489>").queue((m) -> {
-			m.delete().queue();
-		});
 	}
 	
-	public static void sendTimedMessaged(CommandEvent event, String message, int ms, boolean isPrivate) {
+	/**
+	 * Notifies all of the users in the streamers subscriber list unless user has muted notifications.
+	 * @param streamerId
+	 */
+	public static void notifySubscribers(String streamerId, Stream stream) {
+		long start = System.currentTimeMillis();
+		long result = -1;
+		
+		Logger.log(Level.INFO, "Notifying subs...");
+		
+		
+		HVStreamer s = CommandUtils.getStreamerWithDiscordId(streamerId);
+		
+		//Check if streamer exists.
+		if (s == null) {
+			Logger.log(Level.ERROR, streamerId + " (streamer) does not exist.");
+			return;
+		}
+		
+		//Loop through subscribers.
+		s.getSubscribers().forEach((key, value) -> {
+			//makeshift loop breaker.
+			boolean cont = true;
+			
+			HVUser u = CommandUtils.getUserWithDiscordId(value);
+			
+			//Check if user exists
+			if (u == null) {
+				Logger.log(Level.ERROR, value + " (user) does not exist.");
+				cont = false;
+			}
+			
+			//if user has notifs muted
+			if (u.isNotifsMuted()) {
+				cont = false;
+			}
+			
+			//If user notifs unmuted and exists.
+			if (cont) {
+				
+				try {
+					//fetch the member from the server. 
+					DiscordBot.jda.getGuildById(DiscordBot.configuration.getGuildId()).retrieveMemberById(value).queue(m -> {
+						//attempt to open a private channel and send the message.
+						m.getUser().openPrivateChannel().queue(channel -> {
+							EmbedBuilder eb = new EmbedBuilder();
+							String game = TwitchAPI.getGameName(stream.getGameId());
+							
+							
+							eb.setTitle(u.getDiscordName() + " is now live!");
+							eb.addField("<a:livesmall:848591733658615858> " 
+									+ stream.getUserName() + "[" + s.getDiscordName() + "]", 
+									" <:arrowquest:804000542678056980> :video_game: " +game+": ["+stream.getTitle()+"]("+TwitchUtils.getTwitchChannelUrl(s.getTwitchChannel())+")", false);
+							
+							eb.setFooter("Use '!s mutenotifs' to mute all notifications.");
+							eb.setTimestamp(Instant.now());
+							
+							channel.sendMessage(eb.build()).queue();
+						});
+					});
+					
+				} catch (ErrorResponseException e) {
+					Logger.log(Level.ERROR, "Discord error: " + e.getErrorCode());
+					Logger.log(Level.WARN, "id:" + u.getDiscordId() + " -> Uknown User or Member: not in guild or user does not exist.\nRemoving mappings...");
+					
+					s.getSubscribers().remove(u.getSubscriptions().get(s.getDiscordId()));
+					u.getSubscriptions().remove(s.getDiscordId());
+					
+					JsonDB.database.upsert(s);
+					JsonDB.database.upsert(u);
+					return;
+				}
+			}
+		});
+		
+		result = System.currentTimeMillis() - start;
+		Logger.log(Level.SUCCESS, "Finished notifying subs... Time taken (MS): " + result);
+	}
+	
+	
+	
+	
+	
+	public static void sendTimedMessage(CommandEvent event, String message, int ms, boolean isPrivate) {
 		
 		if (isPrivate) {
 			event.getMember().getUser().openPrivateChannel().queue(channel -> {
@@ -248,6 +346,7 @@ public class DiscordUtils {
 		event.getChannel().sendMessage(message).queue();
 	}
 	
+
 	public static void sendMessage(String channelId, String message) {
 		
 		String guildId = DiscordBot.configuration.getGuildId();

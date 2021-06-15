@@ -24,7 +24,7 @@ public class TwitchAPI {
 	/**
 	 * Temporary fix for twitch online/offline events double firing. 
 	 */
-	public static final Cache<String, Boolean> recentlyOffline = Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
+	public static final Cache<String, Boolean> recentlyOffline = Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES).build();
 	
 	public static String lastEmbed = "";
 	

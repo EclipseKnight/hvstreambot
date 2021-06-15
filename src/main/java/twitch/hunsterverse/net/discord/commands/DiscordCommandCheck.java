@@ -25,7 +25,7 @@ public class DiscordCommandCheck extends Command {
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
 		if (args.length < 1) {
-			DiscordUtils.sendTimedMessaged(event, """
+			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					Invalid Arguments: check [<@discorduser> OR <twitchchannel>];
 					```
@@ -40,9 +40,9 @@ public class DiscordCommandCheck extends Command {
 		if (CommandUtils.isValidSnowflake(discordId)) {
 			
 			// query for snowflake in db and check for active link.
-			if (CommandUtils.getUserWithDiscordId(discordId) != null) {
+			if (CommandUtils.getStreamerWithDiscordId(discordId) != null) {
 				
-				HVStreamer s = CommandUtils.getUserWithDiscordId(discordId);
+				HVStreamer s = CommandUtils.getStreamerWithDiscordId(discordId);
 				
 				DiscordUtils.sendMessage(event, String.format("""
 						```yaml
@@ -52,7 +52,7 @@ public class DiscordCommandCheck extends Command {
 				return;
 			}
 			
-			DiscordUtils.sendTimedMessaged(event, """
+			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					Invalid Arguments: Channel or user does not exist.
 					```
@@ -64,10 +64,10 @@ public class DiscordCommandCheck extends Command {
 		// Check if channel exists
 		if (TwitchAPI.isChannel(channel)) {
 			// Query for user linked to the channel.
-			if (CommandUtils.getUserWithTwitchChannel(channel) != null
-					&& CommandUtils.getUserWithTwitchChannel(channel).isLinked()) {
+			if (CommandUtils.getStreamerWithTwitchChannel(channel) != null
+					&& CommandUtils.getStreamerWithTwitchChannel(channel).isLinked()) {
 				
-				HVStreamer s = CommandUtils.getUserWithTwitchChannel(channel);
+				HVStreamer s = CommandUtils.getStreamerWithTwitchChannel(channel);
 
 				DiscordUtils.sendMessage(event, String.format("""
 						```yaml
@@ -80,7 +80,7 @@ public class DiscordCommandCheck extends Command {
 		
 		
 		// In case neither conditions are met. 
-		DiscordUtils.sendTimedMessaged(event, """
+		DiscordUtils.sendTimedMessage(event, """
 				```yaml
 				Invalid Arguments: Channel or user does not exist.
 				```

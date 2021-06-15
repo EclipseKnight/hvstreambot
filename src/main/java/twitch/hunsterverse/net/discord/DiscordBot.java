@@ -36,6 +36,10 @@ import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandEmbedUpdate;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandRestart;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandUpdate;
 import twitch.hunsterverse.net.discord.commands.owner.config.DiscordCommandConfiguration;
+import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandMuteNotifs;
+import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandSubscribe;
+import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandSubscriptions;
+import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandUnsubscribe;
 import twitch.hunsterverse.net.discord.commands.twitch.DiscordCommandIsLive;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
@@ -162,7 +166,11 @@ public class DiscordBot {
 				new DiscordCommandUnlink(),
 				new DiscordCommandEmbedUpdate(),
 				new DiscordCommandBackup(),
-				new DiscordCommandUpdate() //TODO fix update for linux. As of now just manually run updater.
+				new DiscordCommandUpdate(), //TODO fix update for linux. As of now just manually run updater.
+				new DiscordCommandSubscribe(),
+				new DiscordCommandUnsubscribe(),
+				new DiscordCommandMuteNotifs(),
+				new DiscordCommandSubscriptions()
 				);
 		
 		// built command client

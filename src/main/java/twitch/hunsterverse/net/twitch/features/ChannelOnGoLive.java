@@ -26,7 +26,6 @@ public class ChannelOnGoLive {
 	 */
 	public void onGoLive(ChannelGoLiveEvent event) {
 		
-		
 		EventChannel channel = event.getChannel();
 		Stream stream = event.getStream();
 		
@@ -37,17 +36,23 @@ public class ChannelOnGoLive {
 			return;
 		}
 		
+		//Log event.
 		Logger.log(Level.INFO, stream.getUserName() + " is now live.");
 		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), stream.getUserName() + " is now live.");
 		
 		// Set user to streaming.
-		HVStreamer s = CommandUtils.getUserWithTwitchChannel(channel.getName());
+		HVStreamer s = CommandUtils.getStreamerWithTwitchChannel(channel.getName());
 		s.setStreaming(true);
 		JsonDB.database.upsert(s);
+		
+		//Notify subscribers. 
+		DiscordUtils.notifySubscribers(s.getDiscordId(), stream);
 		
 		// Update bot streamer count.
 		DiscordUtils.setBotStatus((TwitchUtils.getLiveChannels().size()) + " streamer(s)");
 		
 		DiscordUtils.updateLiveEmbeds(false);
 	}
+	
+	
 }

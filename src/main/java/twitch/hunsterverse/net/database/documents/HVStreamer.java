@@ -1,5 +1,7 @@
 package twitch.hunsterverse.net.database.documents;
 
+import java.util.Map;
+
 import io.jsondb.annotation.Document;
 import io.jsondb.annotation.Id;
 
@@ -17,6 +19,8 @@ public class HVStreamer {
 	private boolean pingable;
 	private boolean streaming;
 	
+	// uuid:user discord id
+	private Map<String, String> subscribers;
 	
 	
 	public String getDiscordId() {
@@ -75,4 +79,11 @@ public class HVStreamer {
 		this.streaming = streaming;
 	}
 	
+	public Map<String, String> getSubscribers() {
+		return subscribers;
+	}
+	
+	public void setSubscribers(Map<String, String> subscribers) {
+		this.subscribers = subscribers;
+	}
 }

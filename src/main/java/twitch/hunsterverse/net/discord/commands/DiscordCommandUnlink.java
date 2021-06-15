@@ -26,7 +26,7 @@ public class DiscordCommandUnlink extends Command {
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
 		if (event.getArgs().isBlank()) {
-			DiscordUtils.sendTimedMessaged(event, """
+			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					Invalid Arguments: unlink <discordId or mention>.
 					```
@@ -35,9 +35,9 @@ public class DiscordCommandUnlink extends Command {
 		}
 		
 		String discordId = CommandUtils.getIdFromMention(args[0]);
-		if (CommandUtils.getUserWithDiscordId(discordId) != null && CommandUtils.getUserWithDiscordId(discordId).isLinked()) {
+		if (CommandUtils.getStreamerWithDiscordId(discordId) != null && CommandUtils.getStreamerWithDiscordId(discordId).isLinked()) {
 			
-			HVStreamer s = CommandUtils.getUserWithDiscordId(discordId);
+			HVStreamer s = CommandUtils.getStreamerWithDiscordId(discordId);
 			s.setLinked(false);
 			s.setAffiliate(false);
 			JsonDB.database.upsert(s);
@@ -51,7 +51,7 @@ public class DiscordCommandUnlink extends Command {
 			
 			TwitchCommandRestart.execute(event);
 		} else {
-			DiscordUtils.sendTimedMessaged(event, """
+			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					User is not linked.
 					```

@@ -27,13 +27,13 @@ public class DiscordCommandChannel extends Command {
 		HVStreamer streamer = null;
 		
 		if (CommandUtils.isValidSnowflake(discordId)) {
-			if (CommandUtils.getUserWithDiscordId(discordId) != null) {
-				streamer = CommandUtils.getUserWithDiscordId(discordId);
+			if (CommandUtils.getStreamerWithDiscordId(discordId) != null) {
+				streamer = CommandUtils.getStreamerWithDiscordId(discordId);
 			}
 		}
 		
-		if (streamer == null && CommandUtils.getUserWithDiscordName(args[0]) != null) {
-			streamer = CommandUtils.getUserWithDiscordName(args[0]);
+		if (streamer == null && CommandUtils.getStreamerWithDiscordName(args[0]) != null) {
+			streamer = CommandUtils.getStreamerWithDiscordName(args[0]);
 		}
 		
 		

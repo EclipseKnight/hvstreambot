@@ -30,7 +30,7 @@ public class ChannelOnGoOffline {
 		Logger.log(Level.INFO, event.getChannel().getName() + " is now offline.");
 		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), event.getChannel().getName() + " is now offline.");
 		
-		HVStreamer s = CommandUtils.getUserWithTwitchChannel(event.getChannel().getName());
+		HVStreamer s = CommandUtils.getStreamerWithTwitchChannel(event.getChannel().getName());
 		s.setStreaming(false);
 		JsonDB.database.upsert(s);
 		

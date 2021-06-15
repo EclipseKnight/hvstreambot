@@ -8,6 +8,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.Role;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.database.documents.HVUser;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 
@@ -50,7 +51,7 @@ public class CommandUtils {
 		}
 		
 		if (!reply.isEmpty()) {
-			DiscordUtils.sendTimedMessaged(event, reply, 10000, false);
+			DiscordUtils.sendTimedMessage(event, reply, 10000, false);
 		}
 		
 		return result;
@@ -112,11 +113,11 @@ public class CommandUtils {
 		
 		if (DiscordBot.configuration.getFeatures().get(feature).isLinked()) {
 			
-			if (getUserWithDiscordId(discordId) == null) {
+			if (getStreamerWithDiscordId(discordId) == null) {
 				return false;
 			}
 			
-			if (getUserWithDiscordId(discordId).isLinked()) {
+			if (getStreamerWithDiscordId(discordId).isLinked()) {
 				return true;
 			}
 			return false;
@@ -131,11 +132,11 @@ public class CommandUtils {
 		
 		if (DiscordBot.configuration.getFeatures().get(feature).isAffiliate()) {
 			
-			if (getUserWithDiscordId(discordId) == null) {
+			if (getStreamerWithDiscordId(discordId) == null) {
 				return false;
 			}
 			
-			if (getUserWithDiscordId(discordId).isAffiliate()) {
+			if (getStreamerWithDiscordId(discordId).isAffiliate()) {
 				return true;
 			}
 			return false;
@@ -176,7 +177,7 @@ public class CommandUtils {
 		return false;
 	}
 	
-	public static HVStreamer getUserWithDiscordId(String id) {
+	public static HVStreamer getStreamerWithDiscordId(String id) {
 		if (id == null) {
 			return null;
 		}
@@ -191,7 +192,7 @@ public class CommandUtils {
 		return null;
 	}
 	
-	public static HVStreamer getUserWithDiscordName(String effname) {
+	public static HVStreamer getStreamerWithDiscordName(String effname) {
 		if (effname == null) {
 			return null;
 		}
@@ -207,7 +208,7 @@ public class CommandUtils {
 		return null;
 	}
 	
-	public static HVStreamer getUserWithTwitchChannel(String channel) {
+	public static HVStreamer getStreamerWithTwitchChannel(String channel) {
 		if (channel == null) {
 			return null;
 		}
@@ -222,6 +223,38 @@ public class CommandUtils {
 		
 		return null;
 	}
+	
+	public static HVUser getUserWithDiscordId(String id) {
+		if (id == null) {
+			return null;
+		}
+		
+		String jxQuery = String.format("/.[discordId='%s']", id);
+		List<HVUser> users = JsonDB.database.find(jxQuery, HVUser.class);
+		
+		if (!users.isEmpty() && users != null) {
+			return users.get(0);
+		}
+		
+		return null;
+	}
+	
+	public static HVUser getUserWithDiscordName(String effname) {
+		if (effname == null) {
+			return null;
+		}
+		
+		effname = effname.toLowerCase();
+		String jxQuery = String.format("/.[translate(discordName, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='%s']", effname);
+		List<HVUser> users = JsonDB.database.find(jxQuery, HVUser.class);
+		
+		if (!users.isEmpty() && users != null) {
+			return users.get(0);
+		}
+		
+		return null;
+	}
+	
 	
 	public static String[] splitArgs(String args) {
 		return args.split("\\s+");

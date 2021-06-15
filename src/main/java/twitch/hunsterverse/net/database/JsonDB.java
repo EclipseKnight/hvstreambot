@@ -8,11 +8,16 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.TimeBasedGenerator;
+
 import io.jsondb.JsonDBTemplate;
 import io.jsondb.events.CollectionFileChangeListener;
 import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.database.documents.ActiveEmbed;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.database.documents.HVUser;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 import twitch.hunsterverse.net.logger.Logger;
@@ -26,6 +31,8 @@ public class JsonDB {
 	
 	private final static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	
+	public static TimeBasedGenerator gen = Generators.timeBasedGenerator(EthernetAddress.fromInterface());
+	
 	public static void init() {
 		if (new File(dbFilesLocation).mkdirs()) {
 			Logger.log(Level.INFO, "Database directory created...");
@@ -35,6 +42,10 @@ public class JsonDB {
 		
 		if (!database.collectionExists(HVStreamer.class)) {
 			database.createCollection(HVStreamer.class);
+		}
+		
+		if (!database.collectionExists(HVUser.class)) {
+			database.createCollection(HVUser.class);
 		}
 		
 		if (!database.collectionExists(ActiveEmbed.class)) {

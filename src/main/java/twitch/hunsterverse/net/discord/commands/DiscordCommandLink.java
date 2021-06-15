@@ -1,5 +1,7 @@
 package twitch.hunsterverse.net.discord.commands;
 
+import java.util.HashMap;
+
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
@@ -27,7 +29,7 @@ public class DiscordCommandLink extends Command {
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
 		if (args.length < 3) {
-			DiscordUtils.sendTimedMessaged(event, """
+			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					Invalid Arguments: link <@discorduser> <twitchchannel> [<affiliate> true, false]
 					```
@@ -38,7 +40,7 @@ public class DiscordCommandLink extends Command {
 		
 		String discordId = CommandUtils.getIdFromMention(args[0]);
 		if (!CommandUtils.isValidSnowflake(discordId)) {
-			DiscordUtils.sendTimedMessaged(event, """
+			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					Invalid Snowflake.
 					```
@@ -48,7 +50,7 @@ public class DiscordCommandLink extends Command {
 		
 		String channel = args[1].trim();
 		if (!TwitchAPI.isChannel(channel)) {
-			DiscordUtils.sendTimedMessaged(event, """
+			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					Channel does not exist.
 					```
@@ -58,12 +60,13 @@ public class DiscordCommandLink extends Command {
 		
 		boolean affiliate = Boolean.valueOf(args[2]);
 
-		// If user is already linked.
-		if (CommandUtils.getUserWithDiscordId(discordId) != null && CommandUtils.getUserWithDiscordId(discordId).isLinked()) {
-			HVStreamer s = CommandUtils.getUserWithDiscordId(discordId);
+		// If streamer is already linked.
+		if (CommandUtils.getStreamerWithDiscordId(discordId) != null && CommandUtils.getStreamerWithDiscordId(discordId).isLinked()) {
+			HVStreamer s = CommandUtils.getStreamerWithDiscordId(discordId);
 			s.setLinked(true);
 			s.setTwitchChannel(channel);
 			s.setAffiliate(affiliate);
+			
 			JsonDB.database.upsert(s);
 			
 			DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamRoleId());
@@ -79,7 +82,7 @@ public class DiscordCommandLink extends Command {
 		}
 		
 		
-		//New user
+		//New streamer
 		HVStreamer s = new HVStreamer();
 		s.setDiscordId(discordId);
 		s.setDiscordName(DiscordBot.jda.retrieveUserById(discordId).complete().getAsTag());
@@ -88,6 +91,7 @@ public class DiscordCommandLink extends Command {
 		s.setAffiliate(affiliate);
 		s.setPingable(false);
 		s.setStreaming(TwitchAPI.isLive(channel));
+		s.setSubscribers(new HashMap<String, String>());
 		JsonDB.database.upsert(s);
 		
 		DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamRoleId());

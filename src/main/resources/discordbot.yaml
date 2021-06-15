@@ -167,5 +167,54 @@ features:
          - null
       roles:
          - null
+   
+   
+   #subscription commands. Ignore 'linked' and 'affiliate' properties. keep to false.
+   discord_command_subscribe: 
+      enabled: true
+      linked: false
+      affiliate: false
+      name: subscribe
+      aliases: [sub]
+      description: "subscribe <@streamer or discordid> - subscribes to streamer."
+      channels:
+         - null
+      roles:
+         - null
+         
+   discord_command_unsubscribe: 
+      enabled: true
+      linked: false
+      affiliate: false
+      name: unsubscribe
+      aliases: [unsub]
+      description: "unsubscribe <@streamer or discordid> - unsubscribes to streamer."
+      channels:
+         - null
+      roles:
+         - null
       
+   discord_command_mute_notifs: 
+      enabled: true
+      linked: false
+      affiliate: false
+      name: mutenotifs
+      aliases: [mute]
+      description: "mutenotifs - mutes all subscriber notifications."
+      channels:
+         - null
+      roles:
+         - null
+         
+   discord_command_subscriptions: 
+      enabled: true
+      linked: false
+      affiliate: false
+      name: subscriptions
+      aliases: [subs]
+      description: "mutenotifs - who you are subscribed to."
+      channels:
+         - null
+      roles:
+         - null
    
