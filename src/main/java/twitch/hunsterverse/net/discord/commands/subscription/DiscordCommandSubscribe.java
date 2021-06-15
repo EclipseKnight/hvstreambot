@@ -32,7 +32,7 @@ public class DiscordCommandSubscribe extends Command {
 		
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
-		if (args.length < 2) {
+		if (event.getArgs().isEmpty()) {
 			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					Invalid Arguments: subscribe <@discorduser>
@@ -70,7 +70,7 @@ public class DiscordCommandSubscribe extends Command {
 			if (!s.isLinked()) {
 				DiscordUtils.sendTimedMessage(event, """
 						```yaml
-						Invalid Arguments: Streamer does is not linked to a channel.
+						Invalid Arguments: Streamer is not linked to a channel.
 						```
 						""", 10000, false);
 				return;
@@ -113,7 +113,16 @@ public class DiscordCommandSubscribe extends Command {
 					%s subscribed to %s!
 					```
 					""", u.getDiscordName(), s.getDiscordName()));
+			return;
 		}
+		
+		// In case neither conditions are met. 
+		DiscordUtils.sendTimedMessage(event, """
+				```yaml
+				Invalid Arguments: invalid snowflake or streamer does not exist.
+				```
+				""", 10000, false);
+		return;
 	}
 
 	

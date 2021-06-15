@@ -194,13 +194,13 @@ features:
       roles:
          - null
       
-   discord_command_mute_notifs: 
+   discord_command_toggle_notifs: 
       enabled: true
       linked: false
       affiliate: false
-      name: mutenotifs
-      aliases: [mute]
-      description: "mutenotifs - mutes all subscriber notifications."
+      name: togglenotifs
+      aliases: [toggle]
+      description: "togglenotifs - mutes/unmutes all subscriber notifications."
       channels:
          - null
       roles:

@@ -15,7 +15,12 @@ public class DiscordCommandConfiguration extends Command {
 	
 	@Override
 	protected void execute(CommandEvent event) {
-		DiscordUtils.sendTimedMessage(event, "Invalid Arguments: config [list, ls] or [reload].", 5000, false);
+		DiscordUtils.sendTimedMessage(event, """
+				```yaml
+				Invalid Arguments: config [list, ls] or [reload].
+				```
+				""", 10000, false);
+		
 	}
 
 }

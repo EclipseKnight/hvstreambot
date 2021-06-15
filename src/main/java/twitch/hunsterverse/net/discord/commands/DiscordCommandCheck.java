@@ -24,7 +24,7 @@ public class DiscordCommandCheck extends Command {
 		
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
-		if (args.length < 2) {
+		if (event.getArgs().isEmpty()) {
 			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					Invalid Arguments: check [<@discorduser> OR <twitchchannel>];

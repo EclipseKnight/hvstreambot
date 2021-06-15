@@ -287,7 +287,7 @@ public class DiscordUtils {
 									+ stream.getUserName() + "[" + s.getDiscordName() + "]", 
 									" <:arrowquest:804000542678056980> :video_game: " +game+": ["+stream.getTitle()+"]("+TwitchUtils.getTwitchChannelUrl(s.getTwitchChannel())+")", false);
 							
-							eb.setFooter("Use '!s mutenotifs' to mute all notifications.");
+							eb.setFooter("Use '!s togglenotifs' to mute/un-mute all notifications.");
 							eb.setTimestamp(Instant.now());
 							
 							channel.sendMessage(eb.build()).queue();

@@ -22,7 +22,7 @@ public class DiscordCommandHelp implements Consumer<CommandEvent> {
 				"discord_command_backup",
 				"discord_command_subscribe",
 				"discord_command_unsubscribe",
-				"discord_command_mute_notifs",
+				"discord_command_toggle_notifs",
 				"discord_command_subscriptions"
 				};
 		
