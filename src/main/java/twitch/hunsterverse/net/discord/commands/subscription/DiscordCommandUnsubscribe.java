@@ -28,7 +28,7 @@ public class DiscordCommandUnsubscribe extends Command {
 		
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
-		if (args.length < 1) {
+		if (args.length < 2) {
 			DiscordUtils.sendTimedMessage(event, """
 					```yaml
 					Invalid Arguments: unsubscribe <@discorduser>

@@ -212,7 +212,7 @@ features:
       affiliate: false
       name: subscriptions
       aliases: [subs]
-      description: "mutenotifs - who you are subscribed to."
+      description: "subscriptions - who you are subscribed to."
       channels:
          - null
       roles:
