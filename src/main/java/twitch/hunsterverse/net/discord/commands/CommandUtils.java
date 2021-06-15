@@ -50,7 +50,14 @@ public class CommandUtils {
 			result = false;
 		}
 		
+		if (!canUseCommand(event, feature)) {
+			reply += "You are not allowed to use this command. ";
+			result = false;
+		}
+		
 		if (!reply.isEmpty()) {
+			reply += "\n```";
+			reply = "```yaml\n".concat(reply);
 			DiscordUtils.sendTimedMessage(event, reply, 10000, false);
 		}
 		

@@ -16,8 +16,10 @@ public class DiscordCommandEmbedUpdate extends Command {
 	
 	@Override
 	protected void execute(CommandEvent event) {
-		if (!CommandUtils.fullUsageCheck(event, feature)) 
+		if (!CommandUtils.fullUsageCheck(event, feature)) {
 			return;
+		}
+			
 		
 		event.reply(String.format("""
 				```yaml
