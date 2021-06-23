@@ -39,7 +39,7 @@ public class DiscordUtils {
 		EmbedBuilder eb = new EmbedBuilder();
 		eb.setColor(DiscordBot.jda.getGuildById(DiscordBot.configuration.getGuildId()).getRoleById(DiscordBot.configuration.getStreamRoleId()).getColorRaw());
 		eb.setTitle("Live Hunsterverse Streamers");
-		eb.setFooter("Bot created by Eclipse");
+		eb.setFooter("Bot created by Eclipse. " + DiscordBot.VERSION);
 		
 		//Send the message
 		Message m = DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage(eb.build()).complete();

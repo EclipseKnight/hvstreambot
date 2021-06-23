@@ -30,7 +30,7 @@ public class DiscordCommandHelp implements Consumer<CommandEvent> {
 		
 		for (String c : commands) {
 			if (canUse(event, c)) {
-				message += DiscordBot.prefix
+				message += DiscordBot.PREFIX
 						+ DiscordBot.configuration.getFeatures().get(c).getDescription() + "\n";
 			}
 		}

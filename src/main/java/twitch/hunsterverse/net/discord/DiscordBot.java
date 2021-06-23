@@ -47,7 +47,10 @@ import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class DiscordBot {
 
-	public static final String prefix = "!s ";
+	public static final String VERSION = "v1.2.0";
+	
+	
+	public static final String PREFIX = "!s ";
 
 	/**
 	 * Holds the Bot Configuration
@@ -111,7 +114,7 @@ public class DiscordBot {
 		builder.setCoOwnerIds(configuration.getCoOwnerIds().toArray(new String[configuration.getCoOwnerIds().size()]));
 		
 		// Sets the command prefix (e.g. !c isLive Name)
-		builder.setPrefix(prefix);
+		builder.setPrefix(PREFIX);
 		
 		// Sets the default help command
 		builder.setHelpWord("help");
