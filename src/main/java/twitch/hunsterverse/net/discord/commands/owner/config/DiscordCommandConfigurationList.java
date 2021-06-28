@@ -4,9 +4,11 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import twitch.hunsterverse.net.discord.DiscordBot;
+import twitch.hunsterverse.net.discord.commands.CommandUtils;
 
 public class DiscordCommandConfigurationList extends Command {
 
+	final String feature = "discord_command_config";
 	public DiscordCommandConfigurationList() {
 		this.name = "list";
 		this.aliases = new String[] {"ls"};
@@ -14,6 +16,10 @@ public class DiscordCommandConfigurationList extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
+		if (!CommandUtils.fullUsageCheck(event, feature)) {
+			return;
+		}
+		
 		event.reply(DiscordBot.configuration.toString());
 	}
 }

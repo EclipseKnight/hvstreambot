@@ -47,7 +47,7 @@ import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class DiscordBot {
 
-	public static final String VERSION = "v1.2.0";
+	public static final String VERSION = "v1.2.1";
 	
 	
 	public static final String PREFIX = "!s ";

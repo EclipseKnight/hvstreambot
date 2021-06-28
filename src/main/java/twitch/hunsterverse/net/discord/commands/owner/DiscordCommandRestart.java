@@ -9,7 +9,7 @@ import twitch.hunsterverse.net.discord.commands.CommandUtils;
 public class DiscordCommandRestart extends Command {
 
 	
-	String feature = "discord_command_restart";
+	final String feature = "discord_command_restart";
 	public DiscordCommandRestart() {
 		this.name = "restart";
 		this.children = new Command[] {new DiscordCommandRestartDiscordBot(), new DiscordCommandRestartTwitchBot()};

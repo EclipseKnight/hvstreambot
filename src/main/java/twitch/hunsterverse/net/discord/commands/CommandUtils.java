@@ -36,12 +36,12 @@ public class CommandUtils {
 		}
 		
 		if (!isFeatureLinked(event.getAuthor().getId(), feature)) {
-			reply += "Command requires you to be linked.";
+			reply += "Command requires you to be linked. ";
 			result = false;
 		}
 		
 		if (!isAffiliateFeature(event.getAuthor().getId(), feature)) {
-			reply += "Command requires you to be an affiliate.";
+			reply += "Command requires you to be an affiliate. ";
 			result = false;
 		}
 		
