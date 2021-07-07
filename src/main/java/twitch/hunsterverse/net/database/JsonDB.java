@@ -2,6 +2,8 @@ package twitch.hunsterverse.net.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.time.Instant;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -14,9 +16,11 @@ import com.fasterxml.uuid.impl.TimeBasedGenerator;
 
 import io.jsondb.JsonDBTemplate;
 import io.jsondb.events.CollectionFileChangeListener;
+import net.dv8tion.jda.api.EmbedBuilder;
 import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.database.documents.ActiveEmbed;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.database.documents.HVStreamerConfig;
 import twitch.hunsterverse.net.database.documents.HVUser;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
@@ -44,6 +48,10 @@ public class JsonDB {
 			database.createCollection(HVStreamer.class);
 		}
 		
+		if (!database.collectionExists(HVStreamerConfig.class)) {
+			database.createCollection(HVStreamerConfig.class);
+		}
+		
 		if (!database.collectionExists(HVUser.class)) {
 			database.createCollection(HVUser.class);
 		}
@@ -62,8 +70,10 @@ public class JsonDB {
 			
 			@Override
 			public void collectionFileDeleted(String collectionName) {
+				init();
 				database.reLoadDB();
 				Logger.log(Level.WARN, "Collection File Deleted: " + collectionName +"\nReloaded Database.");
+				
 			}
 			
 			@Override
@@ -72,8 +82,6 @@ public class JsonDB {
 				Logger.log(Level.WARN, "Collection File Added: " + collectionName +"\nReloaded Database.");
 			}
 		});
-		
-		
 		
 	}
 	
@@ -120,11 +128,11 @@ public class JsonDB {
 		
 		// output to discord if channel available. 
 		if (logChannel != null) {
-			DiscordUtils.sendMessage(logChannel, """
-					```yaml
-					Backing up database...
-					```
-					""");
+			EmbedBuilder eb = new EmbedBuilder();
+			eb.setTitle("Backing up database...");
+			eb.setTimestamp(Instant.now());
+			eb.setColor(DiscordBot.COLOR_FAILURE);
+			DiscordUtils.sendMessage(logChannel, eb.build());
 		}
 		Logger.log(Level.WARN, "Backing up database...");
 		
@@ -144,12 +152,46 @@ public class JsonDB {
 		
 		// output to discord if channel available. 
 		if (logChannel != null) {
-			DiscordUtils.sendMessage(logChannel, String.format("""
-					```yaml
-					Backup completed. Time take (MS): %s 
-					```
-					""", result));
+			EmbedBuilder eb = new EmbedBuilder();
+			eb.setTitle("Backup completed!");
+			eb.appendDescription("Time taken: " + result + "ms");
+			eb.setFooter("Backup size: " + folderSize(destDir));
+			eb.setTimestamp(Instant.now());
+			eb.setColor(DiscordBot.COLOR_SUCCESS);
+			DiscordUtils.sendMessage(logChannel, eb.build());
 		}
 		Logger.log(Level.SUCCESS, "Backup completed. Time taken (MS): " + result);
+	}
+	
+	public static String folderSize(File directory) {
+		long size = -1;
+		try {
+			size = Files.walk(directory.toPath())
+				      .filter(p -> p.toFile().isFile())
+				      .mapToLong(p -> p.toFile().length())
+				      .sum();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	    return humanReadableByteCount(size, false);
+	}
+	
+	/*
+	 * copied from stackoverflow.
+	 */
+	private strictfp static String humanReadableByteCount(long bytes, boolean si) {
+	    int unit = si ? 1000 : 1024;
+	    long absBytes = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
+	    if (absBytes < unit) return bytes + " B";
+	    int exp = (int) (Math.log(absBytes) / Math.log(unit));
+	    long th = (long) Math.ceil(Math.pow(unit, exp) * (unit - 0.05));
+	    if (exp < 6 && absBytes >= th - ((th & 0xFFF) == 0xD00 ? 51 : 0)) exp++;
+	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+	    if (exp > 4) {
+	        bytes /= unit;
+	        exp -= 1;
+	    }
+	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }

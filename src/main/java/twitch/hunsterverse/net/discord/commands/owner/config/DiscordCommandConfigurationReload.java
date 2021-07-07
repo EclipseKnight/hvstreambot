@@ -21,10 +21,10 @@ public class DiscordCommandConfigurationReload extends Command {
 		}
 		
 		DiscordBot.loadConfiguration();
-		DiscordUtils.sendMessage(event, """
-				```yaml
-				Configuration reloaded...
-				```
-				""", false);
+		
+		DiscordUtils.sendMessage(event, 
+				DiscordUtils.createShortEmbed("Configuration reloaded!", 
+						null,
+						DiscordBot.COLOR_SUCCESS), false);
 	}
 }

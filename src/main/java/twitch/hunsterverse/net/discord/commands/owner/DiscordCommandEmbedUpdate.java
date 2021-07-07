@@ -21,19 +21,17 @@ public class DiscordCommandEmbedUpdate extends Command {
 		}
 			
 		
-		event.reply(String.format("""
-				```yaml
-				Updating embeds...
-				```
-				"""));
+		
+		event.reply(DiscordUtils.createShortEmbed("Updating embeds...", 
+				null,
+				DiscordBot.COLOR_SUCCESS));
 		long start = System.currentTimeMillis();
 		DiscordUtils.updateLiveEmbeds(true);
 		long result = System.currentTimeMillis() - start;
-		event.reply(String.format("""
-				```yaml
-				Finished updating... Time taken (MS): %s
-				```
-				""", result));
+		
+		event.reply(DiscordUtils.createShortEmbed("Finished updating!", 
+				"Time taken: " + result + "ms",
+				DiscordBot.COLOR_SUCCESS));
 	}
 
 }

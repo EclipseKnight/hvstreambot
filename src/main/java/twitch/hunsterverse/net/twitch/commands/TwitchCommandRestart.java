@@ -18,10 +18,9 @@ public class TwitchCommandRestart {
 	}
 	
 	public static void execute(CommandEvent event) {
-		DiscordUtils.sendMessage(event, "```yaml\nRestarting twitch bot...\n```", false);
 		TwitchBot.twitchClient.close();
 		Launcher.twitchBot = new TwitchBot();
-		DiscordUtils.setBotStatus(TwitchUtils.getLiveChannels().size() + " streamer(s)");
+		DiscordUtils.setBotStatus(TwitchUtils.getLiveFilteredChannels().size() + " streamer(s)");
 		
 	}
 }

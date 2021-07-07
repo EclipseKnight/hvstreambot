@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVUser;
 import twitch.hunsterverse.net.discord.DiscordBot;
@@ -38,19 +39,18 @@ public class DiscordCommandToggleNotifs extends Command {
 		
 		JsonDB.database.upsert(u);
 		
+		EmbedBuilder eb = new EmbedBuilder();
+		eb.setFooter("Use '" + DiscordBot.PREFIX + "toggle' - to mute/un-mute all notifications.");
+		
 		if (u.isNotifsMuted()) {
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					Notifications are now muted. 
-					```
-					""", 10000, false);
+			eb.setDescription("Notifications are now muted!");
+			eb.setColor(DiscordBot.COLOR_FAILURE);
 		} else {
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					Notifications are now un-muted. 
-					```
-					""", 10000, false);
+			eb.setDescription("Notifications are now un-muted!");
+			eb.setColor(DiscordBot.COLOR_SUCCESS);
 		}
+		
+		DiscordUtils.sendMessage(event, eb.build(), false);
 		
 	}
 

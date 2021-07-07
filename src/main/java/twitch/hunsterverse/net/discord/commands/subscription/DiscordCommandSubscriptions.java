@@ -35,11 +35,11 @@ public class DiscordCommandSubscriptions extends Command {
 		}
 		
 		if (u.getSubscriptions().size() <= 0) {
-			DiscordUtils.sendMessage(event, """
-					```yaml
-					You aren't subscribed to anyone...
-					```
-					""", true);
+			DiscordUtils.sendMessage(event, 
+					DiscordUtils.createShortEmbed("Error: You aren't subscribed to anyone...",
+							"Use '" + DiscordBot.PREFIX + "subscribe <@discorduser or discordID>' - to subscribe to a HV streamer.",
+							DiscordBot.COLOR_FAILURE), true);
+			
 			return;
 		}
 		

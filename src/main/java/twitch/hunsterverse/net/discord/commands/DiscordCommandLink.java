@@ -1,14 +1,18 @@
 package twitch.hunsterverse.net.discord.commands;
 
 import java.util.HashMap;
+import java.util.List;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.database.documents.HVStreamerConfig;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
+import twitch.hunsterverse.net.twitch.TwitchBot;
 import twitch.hunsterverse.net.twitch.commands.TwitchCommandRestart;
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
 
@@ -29,32 +33,27 @@ public class DiscordCommandLink extends Command {
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
 		if (args.length < 3) {
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					Invalid Arguments: link <@discorduser> <twitchchannel> [<affiliate> true, false]
-					```
-					""", 10000, false);
+			DiscordUtils.sendTimedMessage(event, 
+					DiscordUtils.createShortEmbed("Invalid Arguments.",
+							DiscordBot.PREFIX + "link <@discorduser> <twitchchannel> [<affiliate> true, false]",
+							DiscordBot.COLOR_FAILURE), 10000, false);
 			return;
 		}
 			
 		
 		String discordId = CommandUtils.getIdFromMention(args[0]);
 		if (!CommandUtils.isValidSnowflake(discordId)) {
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					Invalid Snowflake.
-					```
-					""", 10000, false);
+			DiscordUtils.sendTimedMessage(event, DiscordUtils.createShortEmbed("Error: Invalid snowflake.",
+					null,
+					DiscordBot.COLOR_FAILURE), 10000, false);
 			return;
 		}
 		
 		String channel = args[1].trim();
 		if (!TwitchAPI.isChannel(channel)) {
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					Channel does not exist.
-					```
-					""", 10000, false);
+			DiscordUtils.sendTimedMessage(event, DiscordUtils.createShortEmbed("Error: Channel does not exist.",
+					null,
+					DiscordBot.COLOR_FAILURE), 10000, false);
 			return;
 		}
 		
@@ -69,15 +68,40 @@ public class DiscordCommandLink extends Command {
 			
 			JsonDB.database.upsert(s);
 			
-			DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamRoleId());
-			DiscordUtils.sendMessage(event, String.format("""
-					```yaml
-					Successfully Relinked! | User: %s | TwitchChannel: %s | affiliate: %s
-					```
-					""", "<@"+discordId+">", channel, affiliate), false);
+			if (affiliate) {
+				DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamRoleId());
+				DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamAffiliateRoleId());
+			} else {
+				DiscordUtils.removeRole(event, discordId, DiscordBot.configuration.getStreamAffiliateRoleId());
+				DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamRoleId());
+			}
+			
+			EmbedBuilder eb = new EmbedBuilder();
+			eb.setTitle("Successfully Relinked!");
+			eb.addField("User:", "<@"+discordId+">", true);
+			eb.addField("Twitch Channel:", channel, true);
+			eb.addField("HV Affiliate:", affiliate + "", true);
+			eb.addField("Linked:", s.isLinked() + "", true);
+			eb.setColor(DiscordBot.COLOR_SUCCESS);
+			
+			DiscordUtils.sendMessage(event, eb.build(), false);
 			
 			// Restart twitch bot to register new channel listener
 			TwitchCommandRestart.execute(event);
+			
+			//set default filter.
+			if (!s.isAffiliate()) {
+				HVStreamerConfig config = CommandUtils.getStreamerConfigWithDiscordId(discordId);
+				if (config == null) {
+					config = new HVStreamerConfig();
+					config.setDiscordId(event.getAuthor().getId());
+					config.setSelectedFilter("hv_games");
+					config.setGameFilters(new HashMap<String, List<String>>());
+					config.setGameFilters(CommandUtils.addDefaultFilters(new HashMap<String, List<String>>()));
+				}
+				config.setSelectedFilter("hv_games");
+			}
+			
 			return;
 		}
 		
@@ -95,13 +119,39 @@ public class DiscordCommandLink extends Command {
 		JsonDB.database.upsert(s);
 		
 		DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamRoleId());
-		DiscordUtils.sendMessage(event, String.format("""
-				```yaml
-				Successfully Linked! | User: %s | TwitchChannel: %s | affiliate: %s
-				```
-				""", "<@"+discordId+">", channel, affiliate), false);
+		EmbedBuilder eb = new EmbedBuilder();
+		eb.setTitle("Successfully Linked!");
+		eb.addField("User:", "<@"+discordId+">", true);
+		eb.addField("Twitch Channel:", channel, true);
+		eb.addField("HV Affiliate:", affiliate + "", true);
+		eb.addField("Linked:", s.isLinked() + "", true);
+		eb.setColor(DiscordBot.COLOR_SUCCESS);
 		
-		// Restart twitch bot to register new channel listener
-		TwitchCommandRestart.execute(event);
+		DiscordUtils.sendMessage(event, eb.build(), false);
+		
+		// rejoin listener channels to add new channel.
+		TwitchBot.rejoinListenerChannels();
+		
+		// Set appropriate roles.
+		if (affiliate) {
+			DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamRoleId());
+			DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamAffiliateRoleId());
+		} else {
+			DiscordUtils.removeRole(event, discordId, DiscordBot.configuration.getStreamAffiliateRoleId());
+			DiscordUtils.giveRole(event, discordId, DiscordBot.configuration.getStreamRoleId());
+		}
+		
+		//set default filter.
+		if (!s.isAffiliate()) {
+			HVStreamerConfig config = CommandUtils.getStreamerConfigWithDiscordId(discordId);
+			if (config == null) {
+				config = new HVStreamerConfig();
+				config.setDiscordId(event.getAuthor().getId());
+				config.setSelectedFilter("hv_games");
+				config.setGameFilters(new HashMap<String, List<String>>());
+				config.setGameFilters(CommandUtils.addDefaultFilters(new HashMap<String, List<String>>()));
+			}
+			config.setSelectedFilter("hv_games");
+		}
 	}
 }

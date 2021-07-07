@@ -47,6 +47,9 @@ guild_id:
 #required for the bot to know what role to assign linked users.
 stream_role_id:
 
+#required for the bot to know what role to assign to linked hv affiliate users.
+stream_affiliate_role_id:
+
 #required for the bot to post the active live stream embed
 live_embed_channel:
 
@@ -217,4 +220,16 @@ features:
          - null
       roles:
          - null
-   
+         
+#For game filter commands
+   discord_command_game_filter: 
+      enabled: true
+      linked: false
+      affiliate: false
+      name: gamefilter
+      aliases: [filter]
+      description: "gamefilter [create, delete, list, select] - manage what games you need to play in order to be posted to the embed."
+      channels:
+         - null
+      roles:
+         - null

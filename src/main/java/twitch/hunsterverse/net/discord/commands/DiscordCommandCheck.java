@@ -3,6 +3,7 @@ package twitch.hunsterverse.net.discord.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
@@ -25,11 +26,9 @@ public class DiscordCommandCheck extends Command {
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
 		if (event.getArgs().isEmpty()) {
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					Invalid Arguments: check [<@discorduser> OR <twitchchannel>];
-					```
-					""", 10000, false);
+			DiscordUtils.sendTimedMessage(event, DiscordUtils.createShortEmbed("Invalid Arguments.", 
+					DiscordBot.PREFIX + "check [<@discorduser> OR <twitchchannel>",
+					DiscordBot.COLOR_FAILURE), 10000, false);
 			return;
 		}
 		
@@ -43,20 +42,22 @@ public class DiscordCommandCheck extends Command {
 			if (CommandUtils.getStreamerWithDiscordId(discordId) != null) {
 				
 				HVStreamer s = CommandUtils.getStreamerWithDiscordId(discordId);
+				EmbedBuilder eb = new EmbedBuilder();
+				eb.setTitle("Check Results..");
+				eb.addField("User:", "<@"+discordId+">", true);
+				eb.addField("Twitch Channel:", s.getTwitchChannel(), true);
+				eb.addField("HV Affiliate:", s.isAffiliate() + "", true);
+				eb.addField("Linked:", s.isLinked() + "", true);
+				eb.setColor(DiscordBot.COLOR_STREAMER);
 				
-				DiscordUtils.sendMessage(event, String.format("""
-						```yaml
-						Check Results... | User: %s | TwitchChannel: %s | affiliate: %s | linked: %s
-						```
-						""", "<@"+discordId+">", s.getTwitchChannel(), s.isAffiliate(), s.isLinked()), false);
+				DiscordUtils.sendMessage(event, eb.build(), false);
 				return;
 			}
 			
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					Invalid Arguments: Channel or user does not exist.
-					```
-					""", 10000, false);
+			DiscordUtils.sendTimedMessage(event, 
+					DiscordUtils.createShortEmbed("Invalid Arguments.", 
+							"Channel or user does not exist.",
+							DiscordBot.COLOR_FAILURE), 10000, false);
 			
 			return;
 		} 
@@ -69,22 +70,25 @@ public class DiscordCommandCheck extends Command {
 				
 				HVStreamer s = CommandUtils.getStreamerWithTwitchChannel(channel);
 
-				DiscordUtils.sendMessage(event, String.format("""
-						```yaml
-						Check Results... | User: %s | TwitchChannel: %s | affiliate: %s | linked: %s
-						```
-						""", "<@"+s.getDiscordId()+">", s.getTwitchChannel(), s.isAffiliate(), s.isLinked()), false);
+				EmbedBuilder eb = new EmbedBuilder();
+				eb.setTitle("Check Resules..");
+				eb.addField("User:", "<@"+discordId+">", true);
+				eb.addField("Twitch Channel:", s.getTwitchChannel(), true);
+				eb.addBlankField(false);
+				eb.addField("HV Affiliate:", s.isAffiliate() + "", true);
+				eb.addField("Linked:", s.isLinked() + "", true);
+				eb.setColor(DiscordBot.COLOR_STREAMER);
+				
+				DiscordUtils.sendMessage(event, eb.build(), false);
 				return;
 			}
 		}
 		
-		
 		// In case neither conditions are met. 
-		DiscordUtils.sendTimedMessage(event, """
-				```yaml
-				Invalid Arguments: Channel or user does not exist.
-				```
-				""", 10000, false);
+		DiscordUtils.sendTimedMessage(event, 
+				DiscordUtils.createShortEmbed("Invalid Arguments.", 
+						"Channel or user does not exist.",
+						DiscordBot.COLOR_FAILURE), 10000, false);
 		return;
 	}
 

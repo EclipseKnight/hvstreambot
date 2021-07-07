@@ -31,14 +31,15 @@ import twitch.hunsterverse.net.discord.commands.DiscordCommandCheck;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandHelp;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandLink;
 import twitch.hunsterverse.net.discord.commands.DiscordCommandUnlink;
+import twitch.hunsterverse.net.discord.commands.gamefilters.DiscordCommandGameFilter;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandBackup;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandEmbedUpdate;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandRestart;
 import twitch.hunsterverse.net.discord.commands.owner.DiscordCommandUpdate;
 import twitch.hunsterverse.net.discord.commands.owner.config.DiscordCommandConfiguration;
-import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandToggleNotifs;
 import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandSubscribe;
 import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandSubscriptions;
+import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandToggleNotifs;
 import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandUnsubscribe;
 import twitch.hunsterverse.net.discord.commands.twitch.DiscordCommandIsLive;
 import twitch.hunsterverse.net.logger.Logger;
@@ -47,10 +48,12 @@ import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class DiscordBot {
 
-	public static final String VERSION = "v1.2.1";
-	
-	
+	public static final String VERSION = "v1.2.2";
 	public static final String PREFIX = "!s ";
+	
+	public static final int COLOR_SUCCESS = 65395;
+	public static final int COLOR_FAILURE = 16711748;
+	public static final int COLOR_STREAMER = 6685368;
 
 	/**
 	 * Holds the Bot Configuration
@@ -173,7 +176,8 @@ public class DiscordBot {
 				new DiscordCommandSubscribe(),
 				new DiscordCommandUnsubscribe(),
 				new DiscordCommandToggleNotifs(),
-				new DiscordCommandSubscriptions()
+				new DiscordCommandSubscriptions(),
+				new DiscordCommandGameFilter()
 				);
 		
 		// built command client

@@ -1,13 +1,17 @@
 package twitch.hunsterverse.net.discord.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.database.documents.HVStreamerConfig;
 import twitch.hunsterverse.net.database.documents.HVUser;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
@@ -51,14 +55,17 @@ public class CommandUtils {
 		}
 		
 		if (!canUseCommand(event, feature)) {
-			reply += "You are not allowed to use this command. ";
+			reply += "You do not have the required role. ";
 			result = false;
 		}
 		
 		if (!reply.isEmpty()) {
-			reply += "\n```";
-			reply = "```yaml\n".concat(reply);
-			DiscordUtils.sendTimedMessage(event, reply, 10000, false);
+			EmbedBuilder eb = new EmbedBuilder();
+			eb.setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl());
+			eb.appendDescription(reply);
+			eb.setFooter("Reasons for error are listed.");
+			eb.setColor(DiscordBot.COLOR_FAILURE);
+			DiscordUtils.sendTimedMessage(event, eb.build(), 15000, false);
 		}
 		
 		return result;
@@ -231,6 +238,21 @@ public class CommandUtils {
 		return null;
 	}
 	
+	public static HVStreamerConfig getStreamerConfigWithDiscordId(String id) {
+		if (id == null) {
+			return null;
+		}
+		
+		String jxQuery = String.format("/.[discordId='%s']", id);
+		List<HVStreamerConfig> configs = JsonDB.database.find(jxQuery, HVStreamerConfig.class);
+		
+		if (!configs.isEmpty() && configs != null) {
+			return configs.get(0);
+		}
+		
+		return null;
+	}
+	
 	public static HVUser getUserWithDiscordId(String id) {
 		if (id == null) {
 			return null;
@@ -288,4 +310,69 @@ public class CommandUtils {
         return true;
 	}
 	
+	public static HashMap<String, List<String>> addDefaultFilters(HashMap<String, List<String>> gameFilters) {
+		gameFilters.put("all_games", new ArrayList<String>(Arrays.asList("You shouldn't be looking here...")));
+		
+		List<String> mhGames = new ArrayList<String>(Arrays.asList("Monster Hunter",
+				"Monster Hunter G",
+				"Monster Hunter Freedom", 
+				"Monster Hunter 2",
+				"Monster Hunter Freedom 2",
+				"Monster Hunter Freedom Unite",
+				"Monster Hunter Tri",
+				"Monster Hunter Portable 3rd",
+				"Monster Hunter Portable 3rd HD Ver",
+				"Monster Hunter 3 Ultimate",
+				"Monster Hunter 3 G",
+				"Monster Hunter 4",
+				"Monster Hunter 4 Ultimate",
+				"Monster Hunter Generations",
+				"Monster Hunter Generations Ultimate",
+				"Monster Hunter: World",
+				"Monster Hunter Rise",
+				"Monster Hunter Frontier Online",
+				"Monster Hunter Frontier G",
+				"Monster Hunter Online",
+				"Monster Hunter Stories",
+				"Monster Hunter Stories 2: Wings of Ruin",
+				"Monster Hunter Riders",
+				"Monster Hunter Diary: Poka Poka Felyne Village",
+				"Monster Hunter Diary: Poka Poka Palico Village DX",
+				"Monster Hunter Diary: Poka Poka Airu Village",
+				"Monster Hunter Diary: Poka Poka Airu Village G",
+				"Monster Hunter Explore",
+				"Monster Hunter: Dynamic Hunting"));
+		gameFilters.put("mh_games", mhGames);
+		
+		List<String> hvGames = new ArrayList<String>(Arrays.asList("Phantasy Star Portable 2",
+				"Phantasy Star Portable 2 Infinity",
+				"Phantasy Star Portable",
+				"Metal Gear Solid: Peace Walker",
+				"Metal Gear Solid: Peace Walker - HD Edition",
+				"God Eater",
+				"God Eater 2",
+				"God Eater 3",
+				"God Eater Burst",
+				"God Eater Resurrection",
+				"Toukiden: Kiwami",
+				"Toukiden: The Age of Demons",
+				"Patapon",
+				"Patapon 2",
+				"Patapon 3",
+				"Patapon 2: Art of War",
+				"Patapon Remastered",
+				"Patapon 2 Remastered",
+				"Terraria",
+				"Minecraft",
+				"Midnight Club 3: DUB Edition",
+				"Worms: Open Warfare",
+				"Worms: Open Warfare 2",
+				"Worms: Battle Islands"
+				));
+		
+		hvGames.addAll(mhGames);
+		gameFilters.put("hv_games", hvGames);
+		
+		return gameFilters;
+	}
 }

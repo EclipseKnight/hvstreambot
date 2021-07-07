@@ -11,7 +11,7 @@ public class DiscordCommandConfiguration extends Command {
 
 	final String feature = "discord_command_config";
 	public DiscordCommandConfiguration() {
-		this.name = DiscordBot.configuration.getFeatures().get(feature).getName();
+		this.name = "config";
 		this.children = new Command[] {new DiscordCommandConfigurationList(), new DiscordCommandConfigurationReload()};
 		this.ownerCommand = true;
 	}
@@ -22,11 +22,10 @@ public class DiscordCommandConfiguration extends Command {
 			return;
 		}
 		
-		DiscordUtils.sendTimedMessage(event, """
-				```yaml
-				Invalid Arguments: config [list, ls] or [reload].
-				```
-				""", 10000, false);
+		DiscordUtils.sendTimedMessage(event, 
+				DiscordUtils.createShortEmbed("Invalid Arguments.", 
+						DiscordBot.PREFIX + "config [list, ls] or [reload]",
+						DiscordBot.COLOR_FAILURE), 10000, false);
 		
 	}
 

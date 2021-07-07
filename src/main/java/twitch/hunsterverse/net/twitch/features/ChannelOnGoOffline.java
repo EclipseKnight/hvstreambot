@@ -1,8 +1,11 @@
 package twitch.hunsterverse.net.twitch.features;
 
+import java.time.Instant;
+
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
 import twitch.hunsterverse.net.discord.DiscordBot;
@@ -28,7 +31,13 @@ public class ChannelOnGoOffline {
 		TwitchAPI.recentlyOffline.put(event.getChannel().getId(), true);
 		
 		Logger.log(Level.INFO, event.getChannel().getName() + " is now offline.");
-		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), event.getChannel().getName() + " is now offline.");
+		
+		EmbedBuilder eb = new EmbedBuilder();
+		eb.setDescription(":black_circle: **" + event.getChannel().getName() + "** is now `offline`.");
+		eb.setTimestamp(Instant.now());
+		eb.setFooter("Go Offline");
+		eb.setColor(DiscordBot.COLOR_FAILURE);
+		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), eb.build());
 		
 		HVStreamer s = CommandUtils.getStreamerWithTwitchChannel(event.getChannel().getName());
 		s.setStreaming(false);

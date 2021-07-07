@@ -163,10 +163,19 @@ public class TwitchBot {
 
     public void start() {
         // Connect to all channels
-        for (String channel : TwitchUtils.getListenerChannels()) {
-            twitchClient.getChat().joinChannel(channel);
-//            twitchClient.getChat().sendMessage(channel, "Twitch bot is started.");
-        }
+    	twitchClient.getChat().getChannels().forEach(channel -> {
+    	    twitchClient.getChat().leaveChannel(channel);
+    	});
+    }
+    
+    public static void rejoinListenerChannels() {
+    	twitchClient.getChat().getChannels().forEach(channel -> {
+    	    twitchClient.getChat().leaveChannel(channel);
+    	});
+    	
+    	TwitchUtils.getListenerChannels().forEach(channel -> {
+    		twitchClient.getChat().joinChannel(channel);
+    	});
     }
 
 }

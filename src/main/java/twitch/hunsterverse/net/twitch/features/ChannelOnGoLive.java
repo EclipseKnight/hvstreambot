@@ -1,12 +1,16 @@
 package twitch.hunsterverse.net.twitch.features;
 
+import java.time.Instant;
+
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.common.events.domain.EventChannel;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.helix.domain.Stream;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.database.documents.HVStreamerConfig;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 import twitch.hunsterverse.net.discord.commands.CommandUtils;
@@ -31,27 +35,36 @@ public class ChannelOnGoLive {
 		
 		Boolean pres = TwitchAPI.recentlyOffline.getIfPresent(channel.getId());
 		
-		if (pres != null && pres == true) {
-			Logger.log(Level.INFO, "Found in cache. Stopping event.");
-			return;
-		}
-		
 		//Log event.
 		Logger.log(Level.INFO, stream.getUserName() + " is now live.");
-		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), stream.getUserName() + " is now live.");
+		
+		EmbedBuilder eb = new EmbedBuilder();
+		eb.setDescription("<a:livesmall:848591733658615858> **" + stream.getUserName() + "** is now `live`.");
+		eb.setTimestamp(Instant.now());
+		eb.setFooter("Go Live");
+		eb.setColor(DiscordBot.COLOR_SUCCESS);
+		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), eb.build());
 		
 		// Set user to streaming.
 		HVStreamer s = CommandUtils.getStreamerWithTwitchChannel(channel.getName());
 		s.setStreaming(true);
 		JsonDB.database.upsert(s);
 		
-		//Notify subscribers. 
-		DiscordUtils.notifySubscribers(s.getDiscordId(), stream);
-		
 		// Update bot streamer count.
-		DiscordUtils.setBotStatus((TwitchUtils.getLiveChannels().size()) + " streamer(s)");
+		DiscordUtils.setBotStatus((TwitchUtils.getLiveFilteredChannels().size()) + " streamer(s)");
 		
-		DiscordUtils.updateLiveEmbeds(false);
+		HVStreamerConfig config = CommandUtils.getStreamerConfigWithDiscordId(s.getDiscordId());
+		//If a new streamer went live then highlight channel.
+		if (config.getGameFilters().get(config.getSelectedFilter()).contains(stream.getGameName()) && !(pres != null && pres)) {
+			DiscordBot.jda.getGuildById(DiscordBot.configuration.getGuildId()).getTextChannelById(DiscordBot.configuration.getLiveEmbedChannel()).sendMessage("<:pepegaslam:595804056941887489>").queue((m) -> {
+				m.delete().queue();
+			});
+			
+			DiscordUtils.updateLiveEmbeds(false);
+			
+			//Notify subscribers. 
+			DiscordUtils.notifySubscribers(s.getDiscordId(), stream);
+		}
 	}
 	
 	

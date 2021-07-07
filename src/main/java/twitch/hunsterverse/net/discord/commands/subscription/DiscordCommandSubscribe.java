@@ -33,11 +33,10 @@ public class DiscordCommandSubscribe extends Command {
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
 		if (event.getArgs().isEmpty()) {
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					Invalid Arguments: subscribe <@discorduser>
-					```
-					""", 10000, false);
+			DiscordUtils.sendTimedMessage(event,
+					DiscordUtils.createShortEmbed("Invalid Arguments",
+							DiscordBot.PREFIX + "subscribe <@discorduser or discordID>",
+							DiscordBot.COLOR_FAILURE), 10000, false);
 			return;
 		}
 		String streamerId = CommandUtils.getIdFromMention(args[0]);
@@ -59,20 +58,18 @@ public class DiscordCommandSubscribe extends Command {
 			HVStreamer s = CommandUtils.getStreamerWithDiscordId(streamerId);
 			
 			if (s == null) {
-				DiscordUtils.sendTimedMessage(event, """
-						```yaml
-						Invalid Arguments: Streamer does not exist.
-						```
-						""", 10000, false);
+				DiscordUtils.sendTimedMessage(event,
+						DiscordUtils.createShortEmbed("Error: Streamer does not exist in database.", 
+								null,
+								DiscordBot.COLOR_FAILURE), 10000, false);
 				return;
 			}
 			
 			if (!s.isLinked()) {
-				DiscordUtils.sendTimedMessage(event, """
-						```yaml
-						Invalid Arguments: Streamer is not linked to a channel.
-						```
-						""", 10000, false);
+				DiscordUtils.sendTimedMessage(event, 
+						DiscordUtils.createShortEmbed("Error: Streamer is not currently linked to the bot and a channel.", 
+								null,
+								DiscordBot.COLOR_FAILURE), 10000, false);
 				return;
 			}
 			
@@ -83,11 +80,10 @@ public class DiscordCommandSubscribe extends Command {
 			
 			//Check if user is subscribed to streamer.
 			if (u.getSubscriptions().containsKey(streamerId)) {
-				DiscordUtils.sendTimedMessage(event, """
-						```yaml
-						You are subscribed to this streamer already.
-						```
-						""", 10000, false);
+				DiscordUtils.sendTimedMessage(event, 
+						DiscordUtils.createShortEmbed("Error: You are subscribed to this streamer already.", 
+								"Use '" + DiscordBot.PREFIX + "subscriptions' - to see who you are subscribed to.",
+								DiscordBot.COLOR_FAILURE), 10000, false);
 				return;
 			}
 			
@@ -102,26 +98,23 @@ public class DiscordCommandSubscribe extends Command {
 			JsonDB.database.upsert(s);
 			JsonDB.database.upsert(u);
 			
-			DiscordUtils.sendMessage(event, String.format("""
-					```yaml
-					You have subscribed to %s! You will be messaged when they go live. 
-					```
-					""", s.getDiscordName()), false);
+			DiscordUtils.sendMessage(event,
+					DiscordUtils.createShortEmbed("You have subscribed to " + s.getDiscordName() + "! You will be messaged when they go live.", 
+							null,
+							DiscordBot.COLOR_SUCCESS), false);
 			
-			DiscordUtils.sendMessage(logChannel, String.format("""
-					```yaml
-					%s subscribed to %s!
-					```
-					""", u.getDiscordName(), s.getDiscordName()));
+			DiscordUtils.sendMessage(logChannel, 
+					DiscordUtils.createShortEmbed(u.getDiscordName() + " subscribed to " + s.getDiscordName() + "!", 
+							null,
+							DiscordBot.COLOR_SUCCESS));
 			return;
 		}
 		
 		// In case neither conditions are met. 
-		DiscordUtils.sendTimedMessage(event, """
-				```yaml
-				Invalid Arguments: invalid snowflake or streamer does not exist.
-				```
-				""", 10000, false);
+		DiscordUtils.sendTimedMessage(event,
+				DiscordUtils.createShortEmbed("Invalid Arguments", 
+						"Invalid snowflake or streamer does not exist in database.",
+						DiscordBot.COLOR_SUCCESS), 10000, false);
 		return;
 	}
 

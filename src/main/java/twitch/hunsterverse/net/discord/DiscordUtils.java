@@ -16,7 +16,9 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Activity.ActivityType;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.ActiveEmbed;
@@ -71,9 +73,9 @@ public class DiscordUtils {
 		String channelId = DiscordBot.configuration.getLiveEmbedChannel();
 		
 		List<ActiveEmbed> aes = JsonDB.database.getCollection(ActiveEmbed.class);
-		List<String> liveChannels = TwitchUtils.getLiveChannels();
+		List<String> liveChannels = TwitchUtils.getLiveFilteredChannels();
 		
-		boolean newLiveStreamer = false;
+//		boolean newLiveStreamer = false;
 		
 		//Perform a check to see if there is a change to the live channels. 
 		//If force, update anyways.
@@ -91,9 +93,11 @@ public class DiscordUtils {
 				return;
 			}
 			
+			/*
 			if (recentLiveChannels.size() < liveChannels.size()) {
 				newLiveStreamer = true;
 			}
+			*/
 			
 			recentLiveChannels.clear();
 			recentLiveChannels.addAll(liveChannels);
@@ -216,21 +220,21 @@ public class DiscordUtils {
 		activeEmbedIndex = 0;
 		while (activeEmbedIndex < numOfEmbeds && updatedEmbeds.size() > 0) {
 			ActiveEmbed ae = aes.get(activeEmbedIndex);
-			System.out.println(aes.size() + ":" + updatedEmbeds.size());
 			DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).editMessageById(ae.getMessageId(), updatedEmbeds.get(activeEmbedIndex)).complete();
 			activeEmbedIndex++;
 		}
 		
 		//If a new streamer went live then highlight channel.
+		/*
 		if (newLiveStreamer) {
 			DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("<:pepegaslam:595804056941887489>").queue((m) -> {
 				m.delete().queue();
 			});
 		}
-		
+		*/
 		result = System.currentTimeMillis() - start;
 		Logger.log(Level.SUCCESS, "Finished updating embeds... Time taken (MS): " + result);
-		DiscordUtils.setBotStatus(TwitchUtils.getLiveChannels().size() + " streamer(s)");
+		DiscordUtils.setBotStatus(liveChannels.size() + " streamer(s)");
 	}
 	
 	/**
@@ -282,14 +286,14 @@ public class DiscordUtils {
 							String game = TwitchAPI.getGameName(stream.getGameId());
 							
 							
-							eb.setTitle(u.getDiscordName() + " is now live!");
+							eb.setTitle(s.getDiscordName() + " is now live!");
 							eb.addField("<a:livesmall:848591733658615858> " 
 									+ stream.getUserName() + "[" + s.getDiscordName() + "]", 
 									" <:arrowquest:804000542678056980> :video_game: " +game+": ["+stream.getTitle()+"]("+TwitchUtils.getTwitchChannelUrl(s.getTwitchChannel())+")", false);
 							
-							eb.setFooter("Use '!s togglenotifs' to mute/un-mute all notifications.");
+							eb.setFooter("Use '!s togglenotifs' - to mute/un-mute all notifications.");
 							eb.setTimestamp(Instant.now());
-							
+							eb.setColor(DiscordBot.COLOR_STREAMER);
 							channel.sendMessage(eb.build()).queue();
 						});
 					});
@@ -313,8 +317,56 @@ public class DiscordUtils {
 	}
 	
 	
+	/**
+	 * 
+	 * @param author
+	 * @param title
+	 * @param description
+	 * @param fields
+	 * @param footer
+	 * @param color
+	 * @param timestamp
+	 * @return
+	 */
+	public static MessageEmbed createEmbed(User author, String title, String description, List<Field> fields, String footer, int color, boolean timestamp) {
+		EmbedBuilder eb = new EmbedBuilder();
+		
+		if (author != null)
+			eb.setAuthor(author.getAsTag(), null, author.getAvatarUrl());
+		
+		eb.setTitle(title);
+		eb.setDescription(description);
+		
+		if (fields != null) {
+			for (Field f: fields) {
+				eb.addField(f);
+			}
+		}
+		
+		eb.setFooter(footer);
+		eb.setColor(color);
+		
+		if (timestamp) 
+			eb.setTimestamp(Instant.now());
+			
+		return eb.build();
+		
+	}
 	
-	
+	/**
+	 * 
+	 * @param description
+	 * @param footer
+	 * @param color
+	 * @return
+	 */
+	public static MessageEmbed createShortEmbed(String description, String footer, int color) {
+		EmbedBuilder eb = new EmbedBuilder();
+		eb.setDescription(description);
+		eb.setFooter(footer);
+		eb.setColor(color);
+		return eb.build();
+	}
 	
 	public static void sendTimedMessage(CommandEvent event, String message, int ms, boolean isPrivate) {
 		
@@ -333,6 +385,24 @@ public class DiscordUtils {
 		});
 	}
 	
+	public static void sendTimedMessage(CommandEvent event, MessageEmbed embed, int ms, boolean isPrivate) {
+		
+		if (isPrivate) {
+			event.getMember().getUser().openPrivateChannel().queue(channel -> {
+				channel.sendMessage(embed).queue( m -> {
+					m.delete().queueAfter(ms, TimeUnit.MICROSECONDS);
+				});
+			});
+			
+			return;
+		}
+		
+		event.getChannel().sendMessage(embed).queue( m -> {
+			m.delete().queueAfter(ms, TimeUnit.MILLISECONDS);
+		});
+	}
+	
+	
 	public static void sendMessage(CommandEvent event, String message, boolean isPrivate) {
 		
 		if (isPrivate) {
@@ -344,6 +414,19 @@ public class DiscordUtils {
 		}
 		
 		event.getChannel().sendMessage(message).queue();
+	}
+	
+	public static void sendMessage(CommandEvent event, MessageEmbed embed, boolean isPrivate) {
+		
+		if (isPrivate) {
+			event.getMember().getUser().openPrivateChannel().queue(channel -> {
+				channel.sendMessage(embed).queue();
+			});
+			
+			return;
+		}
+		
+		event.getChannel().sendMessage(embed).queue();
 	}
 	
 

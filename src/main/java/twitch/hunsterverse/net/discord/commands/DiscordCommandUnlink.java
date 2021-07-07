@@ -1,13 +1,18 @@
 package twitch.hunsterverse.net.discord.commands;
 
+import java.util.HashMap;
+import java.util.List;
+
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.database.documents.HVStreamerConfig;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
-import twitch.hunsterverse.net.twitch.commands.TwitchCommandRestart;
+import twitch.hunsterverse.net.twitch.TwitchBot;
 
 public class DiscordCommandUnlink extends Command {
 
@@ -26,11 +31,10 @@ public class DiscordCommandUnlink extends Command {
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
 		if (event.getArgs().isBlank()) {
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					Invalid Arguments: unlink <discordId or mention>.
-					```
-					""", 10000, false);
+			DiscordUtils.sendTimedMessage(event, 
+					DiscordUtils.createShortEmbed("Invalid Arguments.",
+							DiscordBot.PREFIX + "unlink <discordId or @discorduser>",
+							DiscordBot.COLOR_FAILURE), 10000, false);
 			return;
 		}
 		
@@ -42,20 +46,41 @@ public class DiscordCommandUnlink extends Command {
 			s.setAffiliate(false);
 			JsonDB.database.upsert(s);
 			
+			//Remove roles.
 			DiscordUtils.removeRole(event, discordId, DiscordBot.configuration.getStreamRoleId());
-			DiscordUtils.sendMessage(event, String.format("""
-					```yaml
-					Successfully Unlinked! | User: %s | TwitchChannel: %s | affiliate: %s
-					```
-					""", "<@"+discordId+">", s.getTwitchChannel(), s.isAffiliate()), false);
+			DiscordUtils.removeRole(event, discordId, DiscordBot.configuration.getStreamAffiliateRoleId());
 			
-			TwitchCommandRestart.execute(event);
+			EmbedBuilder eb = new EmbedBuilder();
+			eb.setTitle("Successfully Unlinked!");
+			eb.addField("User:", "<@"+discordId+">", true);
+			eb.addField("Twitch Channel:", s.getTwitchChannel(), true);
+			eb.addField("HV Affiliate:", s.isAffiliate() + "", true);
+			eb.addField("Linked:", s.isLinked() + "", true);
+			eb.setColor(DiscordBot.COLOR_STREAMER);
+			
+			DiscordUtils.sendMessage(event, eb.build(), false);
+			
+			TwitchBot.rejoinListenerChannels();
+			
+			//Set default filter.
+			if (!s.isAffiliate()) {
+				HVStreamerConfig config = CommandUtils.getStreamerConfigWithDiscordId(discordId);
+				if (config == null) {
+					config = new HVStreamerConfig();
+					config.setDiscordId(event.getAuthor().getId());
+					config.setSelectedFilter("hv_games");
+					config.setGameFilters(new HashMap<String, List<String>>());
+					config.setGameFilters(CommandUtils.addDefaultFilters(new HashMap<String, List<String>>()));
+				}
+				config.setSelectedFilter("hv_games");
+			}
+			
 		} else {
-			DiscordUtils.sendTimedMessage(event, """
-					```yaml
-					User is not linked.
-					```
-					""", 10000, false);
+			
+			DiscordUtils.sendTimedMessage(event, 
+					DiscordUtils.createShortEmbed("Error: User is not linked.",
+							null,
+							DiscordBot.COLOR_FAILURE), 10000, false);
 		}
 		
 	}

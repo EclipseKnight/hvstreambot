@@ -1,16 +1,18 @@
 package twitch.hunsterverse.net.discord.commands.twitch;
 
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import twitch.hunsterverse.net.discord.DiscordBot;
+import twitch.hunsterverse.net.discord.DiscordUtils;
+import twitch.hunsterverse.net.discord.commands.CommandUtils;
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
 
 public class DiscordCommandIsLive extends Command {
 
+	final String feature = "discord_command_is_live";
 	public DiscordCommandIsLive() {
 		this.name = DiscordBot.configuration.getFeatures().get("discord_command_is_live").getName();
 		this.hidden = false;
@@ -19,17 +21,13 @@ public class DiscordCommandIsLive extends Command {
 	
 	@Override
 	protected void execute(CommandEvent event) {
-		if (!DiscordBot.configuration.getFeatures().get("discord_command_is_live").isEnabled()) {
-			event.getChannel().sendMessage("The \""+ this.name + "\" is disabled.").queue( m -> {
-				m.delete().queueAfter(5, TimeUnit.SECONDS);
-			});
-			
+		if (!CommandUtils.fullUsageCheck(event, feature)) {
 			return;
 		}
 		
 		String[] args = event.getArgs().split("\\s+");
 		
-		event.reply(Arrays.toString(TwitchAPI.isLive(Arrays.asList(args))));
+		event.reply(DiscordUtils.createShortEmbed(Arrays.toString(TwitchAPI.isLive(Arrays.asList(args))), null, DiscordBot.COLOR_STREAMER));
 	}
 
 }
