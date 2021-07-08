@@ -23,7 +23,8 @@ public class DiscordCommandHelp implements Consumer<CommandEvent> {
 				"discord_command_subscribe",
 				"discord_command_unsubscribe",
 				"discord_command_toggle_notifs",
-				"discord_command_subscriptions"
+				"discord_command_subscriptions",
+				"discord_command_game_filter"
 				};
 		
 		String message = "```yaml\nCommands you can use:\n";
