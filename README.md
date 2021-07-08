@@ -29,12 +29,20 @@ This will display all available commands the user is allowed to use.
 ```
 !s config [(list, ls), reload] - reloads the bot config.
 !s restart [twitch, discord] - restarts twitch or discord bot.
+!s embedUpdate - updates the live stream active embeds.
 !s check [<@discorduser>, <twitchchannel>] - displays known information regarding the passed argument i.e. user association, affiliation, etc
 !s link <@discorduser> <twitchchannel> [<affiliate> true, false] - links user and channel and designate if they are affilite or not
 !s unlink <discordId or mention> - unlinks user.
 !s islive <twitchchannel> - checks if channel is live.
-!s embedUpdate - updates the live stream active embeds.
 !s backup - initiates a database backup manually. (Does not affect scheduled backups)
+
+!s subscribe <@streamer or discordid> - subscribes to streamer.
+!s unsubscribe <@streamer or discordid> - unsubscribes to streamer.
+!s togglenotifs - mutes/unmutes all subscriber notifications.
+!s subscriptions - who you are subscribed to.
+
+!s gamefilter [create, delete, list, select] - manage filters.
+
 ```
 
 More information in the discordbot.yaml and twitchbot.yaml files.
@@ -46,6 +54,9 @@ More information in the discordbot.yaml and twitchbot.yaml files.
 - Manual and scheduled database backups and path configuration.
 - full feature configuration. Channel usage, role usage, ability to enable and disable certain commands. 
 - Affiliate parameter to allow affiliate only command usage. Implemented for use with future expansions to this bot.
+- Allow users to subscribe to get a discord dm (notification) when the streamer goes live. Also ability to mute notifs
+- Streamers can create and set filters to allow a stream get posted to an embed when they play a certain game. 
+
 ## Other tools
 
 [hvstreambotupdater](https://github.com/EclipseKnight/hvstreambotupdater) - lets you update the bot by fetching the latest release from the repo. Update command is disabled due to inconsistencies between OS
