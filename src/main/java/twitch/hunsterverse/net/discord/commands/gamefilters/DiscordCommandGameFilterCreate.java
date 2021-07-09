@@ -28,6 +28,9 @@ public class DiscordCommandGameFilterCreate extends Command {
 	@Override
 	protected void execute(CommandEvent event) {
 		//!s gamefilter create <name> <game1 game2 game3 ...>
+		if (!CommandUtils.fullUsageCheck(event, feature)) {
+			return;
+		}
 		
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		

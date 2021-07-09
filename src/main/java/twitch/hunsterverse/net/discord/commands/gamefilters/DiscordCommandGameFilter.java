@@ -22,7 +22,7 @@ public class DiscordCommandGameFilter extends Command {
 	
 	@Override
 	protected void execute(CommandEvent event) {
-		if (!CommandUtils.fullUsageCheck(event, arguments)) {
+		if (!CommandUtils.fullUsageCheck(event, feature)) {
 			return;
 		}
 		

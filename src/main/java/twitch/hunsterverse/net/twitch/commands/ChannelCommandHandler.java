@@ -15,7 +15,7 @@ public class ChannelCommandHandler {
 		String msg = event.getMessage().toLowerCase();
 		
 		// check if message is a command attempt. 
-		if(event.getMessage().startsWith("!c ")) {
+		if(event.getMessage().startsWith("!s ")) {
 
 			
 			// Get the arguments. 

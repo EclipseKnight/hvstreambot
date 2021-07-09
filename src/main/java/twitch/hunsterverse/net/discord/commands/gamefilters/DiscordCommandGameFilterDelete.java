@@ -23,6 +23,9 @@ public class DiscordCommandGameFilterDelete extends Command {
 	@Override
 	protected void execute(CommandEvent event) {
 		//!s gamefilter delete <name>
+		if (!CommandUtils.fullUsageCheck(event, feature)) {
+			return;
+		}
 		
 		if (event.getArgs().isBlank()) {
 			DiscordUtils.sendTimedMessage(event, 
