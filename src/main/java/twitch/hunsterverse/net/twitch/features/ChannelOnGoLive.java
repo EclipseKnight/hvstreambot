@@ -54,17 +54,21 @@ public class ChannelOnGoLive {
 		DiscordUtils.setBotStatus((TwitchUtils.getLiveFilteredChannels().size()) + " streamer(s)");
 		
 		HVStreamerConfig config = CommandUtils.getStreamerConfigWithDiscordId(s.getDiscordId());
+		
+		
 		//If a new streamer went live then highlight channel.
-		if (config.getGameFilters().get(config.getSelectedFilter()).contains(stream.getGameName()) && !(pres != null && pres)) {
-			DiscordBot.jda.getGuildById(DiscordBot.configuration.getGuildId()).getTextChannelById(DiscordBot.configuration.getLiveEmbedChannel()).sendMessage("<:pepegaslam:595804056941887489>").queue((m) -> {
-				m.delete().queue();
-			});
-			
+		System.out.println(("all_games".equals(config.getSelectedFilter()) || config.getGameFilters().get(config.getSelectedFilter()).contains(stream.getGameName())) + ":" + !(pres != null && pres));
+		
+		if ("all_games".equals(config.getSelectedFilter()) || config.getGameFilters().get(config.getSelectedFilter()).contains(stream.getGameName()) && !(pres != null && pres)) {
+
 			DiscordUtils.updateLiveEmbeds(false);
 			
 			//Notify subscribers. 
 			DiscordUtils.notifySubscribers(s.getDiscordId(), stream);
+			return;
 		}
+		
+		DiscordUtils.updateLiveEmbeds(true);
 	}
 	
 	

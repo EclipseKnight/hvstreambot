@@ -43,7 +43,7 @@ public class ChannelOnGoOffline {
 		s.setStreaming(false);
 		JsonDB.database.upsert(s);
 		
-		DiscordUtils.setBotStatus((TwitchUtils.getLiveChannels().size()) + " streamer(s)");
+		DiscordUtils.setBotStatus((TwitchUtils.getLiveFilteredChannels().size()) + " streamer(s)");
 		DiscordUtils.updateLiveEmbeds(true);
 		
 	}

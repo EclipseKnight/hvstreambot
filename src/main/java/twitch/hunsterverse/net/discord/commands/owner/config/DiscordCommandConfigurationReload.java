@@ -26,5 +26,6 @@ public class DiscordCommandConfigurationReload extends Command {
 				DiscordUtils.createShortEmbed("Configuration reloaded!", 
 						null,
 						DiscordBot.COLOR_SUCCESS), false);
+		
 	}
 }

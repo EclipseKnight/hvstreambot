@@ -45,7 +45,7 @@ public class DiscordCommandGameFilterCreate extends Command {
 		
 		String filterName = args[0];
 		//quick thrown together line to split the comma separated games and remove spaces. 
-		String[] inputList = event.getArgs().replace(filterName, "").substring(1).split(",[ ]*");
+		String[] inputList = event.getArgs().replace(filterName, "").substring(1).split("[ ]*,[ ]*");
 		
 		GameList games = TwitchBot.twitchClient.getHelix().getGames(null, null, Arrays.asList(inputList)).execute();
 		
@@ -56,6 +56,7 @@ public class DiscordCommandGameFilterCreate extends Command {
 			config.setSelectedFilter("hv_games");
 			config.setGameFilters(new HashMap<String, List<String>>());
 			config.setGameFilters(CommandUtils.addDefaultFilters(new HashMap<String, List<String>>()));
+			JsonDB.database.upsert(config);
 		}
 		
 		if (config.getGameFilters().size() >= 25) {

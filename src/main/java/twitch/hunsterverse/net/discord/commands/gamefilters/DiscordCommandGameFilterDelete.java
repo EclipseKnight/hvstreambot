@@ -44,6 +44,7 @@ public class DiscordCommandGameFilterDelete extends Command {
 			config.setDiscordId(event.getAuthor().getId());
 			config.setSelectedFilter("hv_games");
 			config.setGameFilters(CommandUtils.addDefaultFilters(new HashMap<String, List<String>>()));
+			JsonDB.database.upsert(config);
 		}
 		
 		//Check if default filter.

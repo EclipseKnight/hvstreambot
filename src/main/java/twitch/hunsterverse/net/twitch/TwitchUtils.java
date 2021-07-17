@@ -10,6 +10,8 @@ import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
 import twitch.hunsterverse.net.database.documents.HVStreamerConfig;
 import twitch.hunsterverse.net.discord.commands.CommandUtils;
+import twitch.hunsterverse.net.logger.Logger;
+import twitch.hunsterverse.net.logger.Logger.Level;
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
 
 public class TwitchUtils {
@@ -62,9 +64,10 @@ public class TwitchUtils {
 			if (config == null) {
 				config = new HVStreamerConfig();
 				config.setDiscordId(s.getDiscordId());
-				config.setSelectedFilter("all_games");
+				config.setSelectedFilter("hv_games");
 				config.setGameFilters(new HashMap<String, List<String>>());
 				config.setGameFilters(CommandUtils.addDefaultFilters(new HashMap<String, List<String>>()));
+				JsonDB.database.upsert(config);
 			}
 			
 			if (s.isLinked() && TwitchAPI.isLive(s.getTwitchChannel())) {
@@ -72,6 +75,11 @@ public class TwitchUtils {
 				Stream stream = null;
 				int pass = 0;
 				while (stream == null && pass < 3) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						Logger.log(Level.WARN, "Failed to sleep/interrupt thread.");
+					}
 					stream = TwitchAPI.getTwitchStream(s.getTwitchChannel());
 					pass++;
 				}

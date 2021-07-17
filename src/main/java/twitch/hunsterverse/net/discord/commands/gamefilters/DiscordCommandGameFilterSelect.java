@@ -44,6 +44,7 @@ public class DiscordCommandGameFilterSelect extends Command {
 			config.setSelectedFilter("hv_games");
 			config.setGameFilters(new HashMap<String, List<String>>());
 			config.setGameFilters(CommandUtils.addDefaultFilters(new HashMap<String, List<String>>()));
+			JsonDB.database.upsert(config);
 		}
 		
 		if (!config.getGameFilters().containsKey(filterName)) {

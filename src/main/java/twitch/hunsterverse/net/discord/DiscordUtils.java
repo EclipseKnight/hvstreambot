@@ -75,36 +75,40 @@ public class DiscordUtils {
 		List<ActiveEmbed> aes = JsonDB.database.getCollection(ActiveEmbed.class);
 		List<String> liveChannels = TwitchUtils.getLiveFilteredChannels();
 		
-//		boolean newLiveStreamer = false;
+		boolean newLiveStreamer = false;
 		
-		//Perform a check to see if there is a change to the live channels. 
-		//If force, update anyways.
-		if (recentLiveChannels != null && !force) {
-			Collections.sort(recentLiveChannels);
-			Collections.sort(liveChannels);
+		//If force flag is false, perform regular checks.
+		if (!force) {
 			
-			if (recentLiveChannels.equals(liveChannels)) {
-				recentLiveChannels.clear();
+			//if there is a cached list.
+			if (recentLiveChannels != null) {
+				Collections.sort(recentLiveChannels);
+				Collections.sort(liveChannels);
+				
+				//if lists aren't matching...
+				if (!recentLiveChannels.equals(liveChannels)) {
+					
+					//check if old list is smaller than new list, indicating a new streamer is live.
+					if (recentLiveChannels.size() < liveChannels.size()) {
+						newLiveStreamer = true;
+					}
+					
+					recentLiveChannels.clear();
+					recentLiveChannels.addAll(liveChannels);
+					Logger.log(Level.WARN, "New streamer is live!" + result);
+					
+				} else {
+					result = System.currentTimeMillis() - start;
+					Logger.log(Level.WARN, "No change in live channels. Skipping update. Time taken (MS): " + result);
+					
+					return;
+				}
+				
+			} else {
+				recentLiveChannels = new ArrayList<String>();
 				recentLiveChannels.addAll(liveChannels);
-				
-				result = System.currentTimeMillis() - start;
-				Logger.log(Level.WARN, "No change in live channels. Skipping update. Time taken (MS): " + result);
-				
-				return;
-			}
-			
-			/*
-			if (recentLiveChannels.size() < liveChannels.size()) {
 				newLiveStreamer = true;
 			}
-			*/
-			
-			recentLiveChannels.clear();
-			recentLiveChannels.addAll(liveChannels);
-			
-		} else {
-			recentLiveChannels = new ArrayList<String>();
-			recentLiveChannels.addAll(liveChannels);
 		}
 		
 		if (liveChannels.size() <= 0) {
@@ -115,6 +119,8 @@ public class DiscordUtils {
 		}
 		
 		
+		
+		//Code to update the embeds begins here.
 		int fieldCount = liveChannels.size();
 		int numOfEmbeds = (int) Math.ceil(fieldCount / 25.0);
 		
@@ -125,7 +131,7 @@ public class DiscordUtils {
 		//adjust active embeds to meet required amount.
 		if (numOfEmbeds > aes.size() || numOfEmbeds < aes.size()) {
 			
-			//If too few, increase
+			//If too few, increase until == to the needed amount
 			if (numOfEmbeds > aes.size()) {
 				Logger.log(Level.DEBUG, "Too few active embeds ("+aes.size()+"), creating more...");
 				
@@ -136,7 +142,7 @@ public class DiscordUtils {
 				}
 			}
 			
-			//If too many, reduce
+			//If too many, reduce until == to the needed amount
 			if (numOfEmbeds < aes.size()) {
 				Logger.log(Level.DEBUG, "Too many active embeds ("+aes.size()+"), reducing amount...");
 
@@ -176,6 +182,7 @@ public class DiscordUtils {
 		int remainFields = fieldCount;
 		int activeEmbedIndex = 0;
 		int channelIndex = 0;
+		//loop through embeds until populated with needed fields/streamers
 		while (activeEmbedIndex < numOfEmbeds) {
 			
 			ActiveEmbed ae = aes.get(activeEmbedIndex);
@@ -193,6 +200,7 @@ public class DiscordUtils {
 			EmbedBuilder eb = new EmbedBuilder(m.getEmbeds().get(0));
 			eb.clearFields();
 			
+			//Loop through adding the needed fields up until 25 field embed limit or needed fields are reahed. C
 			int i = 0;
 			while (i < 25 && i < remainFields) {
 				String ch = liveChannels.get(channelIndex);
@@ -216,7 +224,7 @@ public class DiscordUtils {
 			Logger.log(Level.INFO, "Updating embed " + activeEmbedIndex);
 		}
 		
-		
+		//loop through current embed messages and edit/replace them with newly embed instances.
 		activeEmbedIndex = 0;
 		while (activeEmbedIndex < numOfEmbeds && updatedEmbeds.size() > 0) {
 			ActiveEmbed ae = aes.get(activeEmbedIndex);
@@ -225,15 +233,14 @@ public class DiscordUtils {
 		}
 		
 		//If a new streamer went live then highlight channel.
-		/*
 		if (newLiveStreamer) {
 			DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("<:pepegaslam:595804056941887489>").queue((m) -> {
 				m.delete().queue();
 			});
 		}
-		*/
+		
 		result = System.currentTimeMillis() - start;
-		Logger.log(Level.SUCCESS, "Finished updating embeds... Time taken (MS): " + result);
+		Logger.log(Level.SUCCESS, "Finished updating embeds... Time taken (MS): " + result + "\n");
 		DiscordUtils.setBotStatus(liveChannels.size() + " streamer(s)");
 	}
 	

@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.HVStreamerConfig;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
@@ -35,6 +36,7 @@ public class DiscordCommandGameFilterList extends Command {
 			config.setSelectedFilter("hv_games");
 			config.setGameFilters(new HashMap<String, List<String>>());
 			config.setGameFilters(CommandUtils.addDefaultFilters(new HashMap<String, List<String>>()));
+			JsonDB.database.upsert(config);
 		}
 		
 		//!s gamefilter list
