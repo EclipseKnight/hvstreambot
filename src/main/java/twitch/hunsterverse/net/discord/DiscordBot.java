@@ -49,7 +49,7 @@ import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class DiscordBot {
 
-	public static final String VERSION = "v1.2.5";
+	public static final String VERSION = "v1.2.6";
 	public static final String PREFIX = "!s ";
 	
 	public static final int COLOR_SUCCESS = 65395;
