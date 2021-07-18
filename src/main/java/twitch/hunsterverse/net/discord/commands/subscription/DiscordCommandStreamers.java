@@ -58,7 +58,7 @@ public class DiscordCommandStreamers extends Command {
 		int i = 0;
 		while(i < limit && index < numOfStreamers ) {
 			HVStreamer s = streamers.get(index);
-			eb.appendDescription((index+1) + ". " + s.getTwitchChannel() + "[**" + s.getDiscordName() + "**] (`" + s.getDiscordId() + "`)\n");
+			eb.appendDescription("`" + (index+1) + ".` " + s.getTwitchChannel() + "[**" + s.getDiscordName() + "**] (`" + s.getDiscordId() + "`)\n");
 			i++;
 			index++;
 		}

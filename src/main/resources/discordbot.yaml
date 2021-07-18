@@ -221,8 +221,21 @@ features:
       roles:
          - null
          
-#For game filter commands
-   discord_command_game_filter: 
+   #For game filter commands
+   discord_command_streamers:
+      enabled: true
+      linked: false
+      affiliate: false
+      name: streamers
+      aliases: []
+      description: "streamers <page_number> - list streamers linked to the bot and available to sub to."
+      channels:
+         - null
+      roles:
+         - null
+         
+   #For game filter commands
+   discord_command_game_filter:
       enabled: true
       linked: false
       affiliate: false
@@ -233,3 +246,4 @@ features:
          - null
       roles:
          - null
+         

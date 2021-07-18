@@ -6,6 +6,8 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
+import twitch.hunsterverse.net.logger.Logger;
+import twitch.hunsterverse.net.logger.Logger.Level;
 
 public class DiscordCommandHelp implements Consumer<CommandEvent> {
 
@@ -25,15 +27,20 @@ public class DiscordCommandHelp implements Consumer<CommandEvent> {
 				"discord_command_toggle_notifs",
 				"discord_command_subscriptions",
 				"discord_command_game_filter",
-				"discord_command_subscription"
+				"discord_command_streamers"
 				};
 		
 		String message = "```yaml\nCommands you can use:\n";
 		
 		for (String c : commands) {
 			if (canUse(event, c)) {
-				message += DiscordBot.PREFIX
-						+ DiscordBot.configuration.getFeatures().get(c).getDescription() + "\n";
+				try {
+					message += DiscordBot.PREFIX
+							+ DiscordBot.configuration.getFeatures().get(c).getDescription() + "\n";
+				} catch (NullPointerException e) {
+					Logger.log(Level.ERROR, "Map returned null when getting " + c);
+				}
+				
 			}
 		}
 		
