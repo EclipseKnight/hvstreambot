@@ -38,10 +38,10 @@ public class DiscordUtils {
 		
 		ActiveEmbed ae = new ActiveEmbed();
 		
-		EmbedBuilder eb = new EmbedBuilder();
-		eb.setColor(DiscordBot.jda.getGuildById(DiscordBot.configuration.getGuildId()).getRoleById(DiscordBot.configuration.getStreamRoleId()).getColorRaw());
-		eb.setTitle("Live Hunsterverse Streamers");
-		eb.setFooter("Bot created by Eclipse. " + DiscordBot.VERSION);
+		EmbedBuilder eb = new EmbedBuilder()
+				.setColor(DiscordBot.jda.getGuildById(DiscordBot.configuration.getGuildId()).getRoleById(DiscordBot.configuration.getStreamRoleId()).getColorRaw())
+				.setTitle("Live Hunsterverse Streamers")
+				.setFooter("Bot created by Eclipse. " + DiscordBot.VERSION);
 		
 		//Send the message
 		Message m = DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage(eb.build()).complete();
@@ -372,6 +372,25 @@ public class DiscordUtils {
 		eb.setDescription(description);
 		eb.setFooter(footer);
 		eb.setColor(color);
+		return eb.build();
+	}
+	
+	/**
+	 * 
+	 * @param description
+	 * @param footer
+	 * @param color
+	 * @return
+	 */
+	public static MessageEmbed createShortEmbed(String description, String footer, int color, boolean timestamp) {
+		EmbedBuilder eb = new EmbedBuilder();
+		eb.setDescription(description);
+		eb.setFooter(footer);
+		eb.setColor(color);
+		if (timestamp) {
+			eb.setTimestamp(Instant.now());
+		}
+		
 		return eb.build();
 	}
 	

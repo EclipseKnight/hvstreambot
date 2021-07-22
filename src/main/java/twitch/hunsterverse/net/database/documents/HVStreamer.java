@@ -18,6 +18,7 @@ public class HVStreamer {
 	private boolean affiliate;
 	private boolean pingable;
 	private boolean streaming;
+	private long timeStreamed;
 	
 	// uuid:user discord id
 	private Map<String, String> subscribers;
@@ -85,5 +86,13 @@ public class HVStreamer {
 	
 	public void setSubscribers(Map<String, String> subscribers) {
 		this.subscribers = subscribers;
+	}
+	
+	public long getTimeStreamed() {
+		return timeStreamed;
+	}
+	
+	public void setTimeStreamed(long timeStreamed) {
+		this.timeStreamed = timeStreamed;
 	}
 }

@@ -284,6 +284,14 @@ public class CommandUtils {
 		return null;
 	}
 	
+	public static String getTimedStreamedReadable(long timePlayed) {
+		long seconds = timePlayed / 1000 % 60;
+		long minutes = timePlayed / (60 * 1000) % 60;
+		long hours = timePlayed / (60 * 60 * 1000) % 24;
+		long days = timePlayed / (24 * 60 * 60 * 1000);
+		
+		return String.format("%sd:%sh:%sm:%ss", days, hours, minutes, seconds);
+	}
 	
 	public static String[] splitArgs(String args) {
 		return args.split("\\s+");

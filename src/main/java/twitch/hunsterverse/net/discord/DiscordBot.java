@@ -11,8 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.security.auth.login.LoginException;
 
@@ -45,6 +44,8 @@ import twitch.hunsterverse.net.discord.commands.subscription.DiscordCommandUnsub
 import twitch.hunsterverse.net.discord.commands.twitch.DiscordCommandIsLive;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
+import twitch.hunsterverse.net.tasks.StreamerMetricsTask;
+import twitch.hunsterverse.net.tasks.UpdateLiveEmbedsTask;
 import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class DiscordBot {
@@ -78,10 +79,11 @@ public class DiscordBot {
 	
 	
 	/**
-	 * scheduler for timed tasks
+	 * executor for tasks.
 	 */
-	private final static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	private final static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 	
+	public static StreamerMetricsTask metricsTask = new StreamerMetricsTask();
 	
 	public DiscordBot() {
 		// Load Configuration
@@ -133,24 +135,23 @@ public class DiscordBot {
 		startActiveStreamEmbed();
 		
 		//start scheduled updates.
-		initScheduledEmbedUpdates();
+		initScheduledTasks();
 		
 		// For displaying current number of live streamer as a status. 
-		DiscordUtils.setBotStatus(TwitchUtils.getLiveChannels().size() + " streamer(s)");
+		DiscordUtils.setBotStatus(TwitchUtils.getLiveFilteredChannels().size() + " streamer(s)");
 		jda.getSelfUser().getManager().setName(configuration.getBot().get("name"));
-	
 		
 	}
 	
-	private void initScheduledEmbedUpdates() {
-		DiscordBot.scheduler.scheduleAtFixedRate(new Runnable() {
-
-			@Override
-			public void run() {
-				DiscordUtils.updateLiveEmbeds(true);
-			}
-			
-		}, 15, 15, TimeUnit.MINUTES);
+	private void initScheduledTasks() {
+		if (DiscordBot.executor.getActiveCount() >= DiscordBot.executor.getMaximumPoolSize()) {
+			return;
+		}
+		
+		//15min
+		DiscordBot.executor.submit(new UpdateLiveEmbedsTask(900000));
+				
+		DiscordBot.executor.submit(metricsTask);
 	}
 
 	private void startActiveStreamEmbed() {
@@ -236,5 +237,11 @@ public class DiscordBot {
 			e.printStackTrace();
 			Logger.log(Level.ERROR, "Failed to generate discordbot.yaml...");
 		}
+    }
+    
+    public static void restart() {
+    	DiscordBot.jda.shutdown();
+    	Launcher.discordBot = new DiscordBot();
+		
     }
 }

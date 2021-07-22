@@ -1,5 +1,7 @@
 package twitch.hunsterverse.net.discord.commands.subscription;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.jagrosh.jdautilities.command.Command;
@@ -35,6 +37,14 @@ public class DiscordCommandStreamers extends Command {
 		}
 	
 		List<HVStreamer> streamers = JsonDB.database.getCollection(HVStreamer.class);
+		Collections.sort(streamers, new Comparator<HVStreamer>() {
+
+			@Override
+			public int compare(HVStreamer o1, HVStreamer o2) {
+				return o1.getTwitchChannel().compareTo(o2.getTwitchChannel());
+			}
+			
+		});
 		int numOfStreamers = streamers.size();
 		int numOfPages = (int) Math.ceil((double) numOfStreamers/limit);
 		
@@ -58,7 +68,8 @@ public class DiscordCommandStreamers extends Command {
 		int i = 0;
 		while(i < limit && index < numOfStreamers ) {
 			HVStreamer s = streamers.get(index);
-			eb.appendDescription("`" + (index+1) + ".` " + s.getTwitchChannel() + "[**" + s.getDiscordName() + "**] (`" + s.getDiscordId() + "`)\n");
+			eb.appendDescription("`" + (index+1) + ".` " + s.getTwitchChannel() + "[**" + s.getDiscordName() + "**] (`" + s.getDiscordId() + "`) `" 
+			+ CommandUtils.getTimedStreamedReadable(s.getTimeStreamed()) + "`\n");
 			i++;
 			index++;
 		}

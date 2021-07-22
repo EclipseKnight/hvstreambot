@@ -44,10 +44,11 @@ public class DiscordCommandCheck extends Command {
 				HVStreamer s = CommandUtils.getStreamerWithDiscordId(discordId);
 				EmbedBuilder eb = new EmbedBuilder();
 				eb.setTitle("Check Results..");
-				eb.addField("User:", "<@"+discordId+">", true);
+				eb.addField("User:", "`<@"+discordId+">`", false);
 				eb.addField("Twitch Channel:", s.getTwitchChannel(), true);
 				eb.addField("HV Affiliate:", s.isAffiliate() + "", true);
 				eb.addField("Linked:", s.isLinked() + "", true);
+				eb.addField("Time Streamed:", "`" + CommandUtils.getTimedStreamedReadable(s.getTimeStreamed()) + "`", false);
 				eb.setColor(DiscordBot.COLOR_STREAMER);
 				
 				DiscordUtils.sendMessage(event, eb.build(), false);

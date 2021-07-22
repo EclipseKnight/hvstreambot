@@ -47,6 +47,7 @@ public class ChannelOnGoLive {
 		
 		// Set user to streaming.
 		HVStreamer s = CommandUtils.getStreamerWithTwitchChannel(channel.getName());
+		s.setTimeStreamed(s.getTimeStreamed() - DiscordBot.metricsTask.getUnprocessedTime());
 		s.setStreaming(true);
 		JsonDB.database.upsert(s);
 		
