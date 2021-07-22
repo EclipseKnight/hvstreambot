@@ -10,8 +10,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TwitchConfiguration {
 
-    private Boolean debug;
-
     private Map<String, String> bot;
 
     private Map<String, String> api;
@@ -20,14 +18,7 @@ public class TwitchConfiguration {
     
     private Map<String, TwitchFeature> features;
 
-    public Boolean getDebug() {
-        return debug;
-    }
-
-    public void setDebug(Boolean debug) {
-        this.debug = debug;
-    }
-
+    
     public Map<String, String> getBot() {
         return bot;
     }

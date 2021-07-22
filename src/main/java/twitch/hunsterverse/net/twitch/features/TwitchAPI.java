@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.helix.domain.GameList;
 import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.helix.domain.StreamList;
@@ -18,6 +17,7 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
 import twitch.hunsterverse.net.twitch.TwitchBot;
+import twitch.hunsterverse.net.twitch.command.TwitchCommandEvent;
 
 public class TwitchAPI {
 
@@ -97,7 +97,7 @@ public class TwitchAPI {
 	 * @param event
 	 * @param message
 	 */
-	public static void sendMessage(ChannelMessageEvent event, String message) {
+	public static void sendMessage(TwitchCommandEvent event, String message) {
 		event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
 	}
 	

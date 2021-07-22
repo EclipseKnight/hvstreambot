@@ -13,7 +13,7 @@ import twitch.hunsterverse.net.database.documents.HVStreamerConfig;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 import twitch.hunsterverse.net.twitch.TwitchBot;
-import twitch.hunsterverse.net.twitch.commands.TwitchCommandRestart;
+import twitch.hunsterverse.net.twitch.command.commands.TwitchCommandRestart;
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
 
 public class DiscordCommandLink extends Command {

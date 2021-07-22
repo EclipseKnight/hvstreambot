@@ -1,13 +1,25 @@
-package twitch.hunsterverse.net.twitch.commands;
-
-import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+package twitch.hunsterverse.net.twitch.command.commands;
 
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.twitch.TwitchBot;
+import twitch.hunsterverse.net.twitch.TwitchUtils;
+import twitch.hunsterverse.net.twitch.command.TwitchCommand;
+import twitch.hunsterverse.net.twitch.command.TwitchCommandEvent;
 
-public class TwitchCommandConfiguration {
+public class TwitchCommandConfiguration extends TwitchCommand {
+	
+	public TwitchCommandConfiguration() {
+		this.feature = "twitch_command_configuration";
+		this.name = TwitchBot.configuration.getFeatures().get(feature).getName();
+		this.aliases = TwitchBot.configuration.getFeatures().get(feature).getAliases();
+	}
 
-	public static void execute(ChannelMessageEvent event) {
+	@Override
+	protected void execute(TwitchCommandEvent event) {
+		if (TwitchUtils.fullUsageCheck(event, feature)) {
+			return;
+		}
+		
 		String msg = event.getMessage();
 		String[] args = msg.substring(msg.indexOf("!c")+3).split("\\s+");
 		

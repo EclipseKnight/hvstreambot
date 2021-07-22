@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 import twitch.hunsterverse.net.discord.commands.CommandUtils;
-import twitch.hunsterverse.net.twitch.commands.TwitchCommandRestart;
+import twitch.hunsterverse.net.twitch.command.commands.TwitchCommandRestart;
 
 public class DiscordCommandRestartTwitchBot extends Command {
 

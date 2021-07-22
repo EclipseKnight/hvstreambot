@@ -5,7 +5,6 @@
 #                                                                                      #
 ########################################################################################
 
-debug: false
 bot:
     # Name of your bot
     name: HVStreamBot
@@ -30,7 +29,28 @@ credentials:
 features:
    twitch_command_is_live:
       enabled: true
+      affiliate: false
       mod_only: false
       name: islive
-      channels: 
-         - EclipsesKnight
+      aliases: []
+
+   twitch_command_restart:
+      enabled: false
+      affiliate: false
+      mod_only: false
+      name: restart
+      aliases: []
+
+   twitch_command_configuration:
+      enabled: false
+      affiliate: false
+      mod_only: false
+      name: config
+      aliases: []
+      
+   twitch_command_free_gh:
+      enabled: true
+      affiliate: false
+      mod_only: false
+      name: freegh
+      aliases: []

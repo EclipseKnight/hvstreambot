@@ -19,12 +19,21 @@ import com.github.twitch4j.TwitchClientBuilder;
 import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
-import twitch.hunsterverse.net.twitch.commands.ChannelCommandHandler;
+import twitch.hunsterverse.net.twitch.command.commands.ChannelCommandHandler;
+import twitch.hunsterverse.net.twitch.command.commands.TwitchCommandConfiguration;
+import twitch.hunsterverse.net.twitch.command.commands.TwitchCommandFreeGH;
+import twitch.hunsterverse.net.twitch.command.commands.TwitchCommandIsLive;
+import twitch.hunsterverse.net.twitch.command.commands.TwitchCommandRestart;
 import twitch.hunsterverse.net.twitch.features.ChannelOnGoLive;
 import twitch.hunsterverse.net.twitch.features.ChannelOnGoOffline;
 
 public class TwitchBot {
 
+	/**
+	 * Command prefix.
+	 */
+	public static final String PREFIX = "!s ";
+	
     /**
      * Holds the Bot Configuration
      */
@@ -103,6 +112,13 @@ public class TwitchBot {
         // Register Event-based features
 //		WriteChannelChatToConsole writeChannelChatToConsole = new WriteChannelChatToConsole(eventHandler);
 		ChannelCommandHandler channelCommandHandler = new ChannelCommandHandler(eventHandler);
+		//Add commands to the handler.
+		channelCommandHandler.addCommands(new TwitchCommandIsLive(),
+				new TwitchCommandConfiguration(),
+				new TwitchCommandRestart(),
+				new TwitchCommandFreeGH()
+				);
+		
 		ChannelOnGoLive channelOnGoLive = new ChannelOnGoLive(eventHandler);
 		ChannelOnGoOffline channelOnGoOffline = new ChannelOnGoOffline(eventHandler);
 		
@@ -163,8 +179,8 @@ public class TwitchBot {
 
     public void start() {
         // Connect to all channels
-    	twitchClient.getChat().getChannels().forEach(channel -> {
-    	    twitchClient.getChat().leaveChannel(channel);
+    	TwitchUtils.getListenerChannels().forEach(channel -> {
+    		twitchClient.getChat().joinChannel(channel);
     	});
     }
     
