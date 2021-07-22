@@ -50,7 +50,7 @@ import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class DiscordBot {
 
-	public static final String VERSION = "v1.2.7";
+	public static final String VERSION = "v1.2.8";
 	public static final String PREFIX = "!s ";
 	
 	public static final int COLOR_SUCCESS = 65395;
