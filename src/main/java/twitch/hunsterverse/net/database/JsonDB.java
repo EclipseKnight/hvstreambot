@@ -104,7 +104,8 @@ public class JsonDB {
 			path = Launcher.uwd  + File.separator + "hvstreambot" + File.separator + "backups";
 		}
 		
-		Logger.log(Level.WARN, "Backups are enabled. Interval: "+ interval + " hours\nStored at " + path);
+		Logger.log(Level.WARN, "Backups are enabled. Interval: "+ interval + " hours");
+		Logger.log(Level.WARN, "Backups are being stored at" + path);
 		
 		JsonDB.scheduler.scheduleAtFixedRate(new Runnable() {
 

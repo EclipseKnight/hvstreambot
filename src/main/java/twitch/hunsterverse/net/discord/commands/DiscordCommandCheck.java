@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
+import twitch.hunsterverse.net.database.documents.HVStreamerConfig;
 import twitch.hunsterverse.net.discord.DiscordBot;
 import twitch.hunsterverse.net.discord.DiscordUtils;
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
@@ -25,15 +26,37 @@ public class DiscordCommandCheck extends Command {
 		
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
-		if (event.getArgs().isEmpty()) {
-			DiscordUtils.sendTimedMessage(event, DiscordUtils.createShortEmbed("Invalid Arguments.", 
-					DiscordBot.PREFIX + "check [<@discorduser> OR <twitchchannel>",
-					DiscordBot.COLOR_FAILURE), 10000, false);
+		if (event.getArgs().isBlank()) {
+			HVStreamer s = CommandUtils.getStreamerWithDiscordId(event.getAuthor().getId());
+			HVStreamerConfig c = CommandUtils.getStreamerConfigWithDiscordId(event.getAuthor().getId());
+			if (s != null) {
+				EmbedBuilder eb = new EmbedBuilder()
+						.setTitle("Check Resules..")
+						.addField("User:", "<@"+event.getAuthor().getId()+">", true)
+						.addField("Twitch Channel:", s.getTwitchChannel(), true)
+						.addBlankField(false)
+						.addField("HV Affiliate:", s.isAffiliate() + "", true)
+						.addField("Linked:", s.isLinked() + "", true)
+						.addField("Filter", c.getSelectedFilter(), true)
+						.setColor(DiscordBot.COLOR_STREAMER);
+//				eb.addField("Time Streamed:", "`" + CommandUtils.getTimedStreamedReadable(s.getTimeStreamed()) + "`", false);
+				
+				DiscordUtils.sendMessage(event, eb.build(), false);
+				return;
+			}
+			
+			DiscordUtils.sendTimedMessage(event, 
+					DiscordUtils.createShortEmbed("Invalid Arguments.", 
+							"Channel or user does not exist.",
+							DiscordBot.COLOR_FAILURE), 10000, false);
+			
 			return;
 		}
 		
 		String discordId = CommandUtils.getIdFromMention(args[0]);
 		String channel = args[0].trim();
+		
+		
 		
 		// Check for valid snowflake
 		if (CommandUtils.isValidSnowflake(discordId)) {
@@ -42,14 +65,17 @@ public class DiscordCommandCheck extends Command {
 			if (CommandUtils.getStreamerWithDiscordId(discordId) != null) {
 				
 				HVStreamer s = CommandUtils.getStreamerWithDiscordId(discordId);
-				EmbedBuilder eb = new EmbedBuilder();
-				eb.setTitle("Check Results..");
-				eb.addField("User:", "`<@"+discordId+">`", false);
-				eb.addField("Twitch Channel:", s.getTwitchChannel(), true);
-				eb.addField("HV Affiliate:", s.isAffiliate() + "", true);
-				eb.addField("Linked:", s.isLinked() + "", true);
-				eb.addField("Time Streamed:", "`" + CommandUtils.getTimedStreamedReadable(s.getTimeStreamed()) + "`", false);
-				eb.setColor(DiscordBot.COLOR_STREAMER);
+				HVStreamerConfig c = CommandUtils.getStreamerConfigWithDiscordId(discordId);
+				EmbedBuilder eb = new EmbedBuilder()
+						.setTitle("Check Resules..")
+						.addField("User:", "<@"+discordId+">", true)
+						.addField("Twitch Channel:", s.getTwitchChannel(), true)
+						.addBlankField(false)
+						.addField("HV Affiliate:", s.isAffiliate() + "", true)
+						.addField("Linked:", s.isLinked() + "", true)
+						.addField("Filter", c.getSelectedFilter(), true)
+						.setColor(DiscordBot.COLOR_STREAMER);
+//				eb.addField("Time Streamed:", "`" + CommandUtils.getTimedStreamedReadable(s.getTimeStreamed()) + "`", false);
 				
 				DiscordUtils.sendMessage(event, eb.build(), false);
 				return;
@@ -70,15 +96,18 @@ public class DiscordCommandCheck extends Command {
 					&& CommandUtils.getStreamerWithTwitchChannel(channel).isLinked()) {
 				
 				HVStreamer s = CommandUtils.getStreamerWithTwitchChannel(channel);
-
-				EmbedBuilder eb = new EmbedBuilder();
-				eb.setTitle("Check Resules..");
-				eb.addField("User:", "<@"+discordId+">", true);
-				eb.addField("Twitch Channel:", s.getTwitchChannel(), true);
-				eb.addBlankField(false);
-				eb.addField("HV Affiliate:", s.isAffiliate() + "", true);
-				eb.addField("Linked:", s.isLinked() + "", true);
-				eb.setColor(DiscordBot.COLOR_STREAMER);
+				HVStreamerConfig c = CommandUtils.getStreamerConfigWithDiscordId(discordId);
+				EmbedBuilder eb = new EmbedBuilder()
+						.setTitle("Check Resules..")
+						.addField("User:", "<@"+discordId+">", true)
+						.addField("Twitch Channel:", s.getTwitchChannel(), true)
+						.addBlankField(false)
+						.addField("HV Affiliate:", s.isAffiliate() + "", true)
+						.addField("Linked:", s.isLinked() + "", true)
+						.addField("Filter", c.getSelectedFilter(), true)
+						.setColor(DiscordBot.COLOR_STREAMER);
+				
+//				eb.addField("Time Streamed:", "`" + CommandUtils.getTimedStreamedReadable(s.getTimeStreamed()) + "`", false);
 				
 				DiscordUtils.sendMessage(event, eb.build(), false);
 				return;

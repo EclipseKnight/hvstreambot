@@ -19,6 +19,9 @@ api:
 
     # Twitch Application Client Secret (You can get it here: https://twitchtokengenerator.com/)
     twitch_client_secret: 
+    
+    # Ths key is for utilizing the hunsterverse api. Get it for Zack in Hunsterverse.
+    hunsterverse_api_key:
 
 # Credentials
 credentials:

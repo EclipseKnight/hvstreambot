@@ -1,7 +1,14 @@
 package twitch.hunsterverse.net.logger;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
+
+import twitch.hunsterverse.net.Launcher;
 
 /**
  * Not going to bother user an existing logger since this project is riddled
@@ -11,16 +18,24 @@ import java.util.Date;
  *
  */
 public class Logger {
+	
+	/*
+	 * Path to the directory where logs are stored. 
+	 */
+	public static String PATH = Launcher.uwd  + File.separator + "hvstreambot" + File.separator + "logs";
+	
 	public static final String RESET = "\033[0m";  // Text Reset
 
 	public static final String PURPLE = "\033[0;35m";  // PURPLE
-	
 	public static final String WHITE_BRIGHT = "\033[0;97m";  // WHITE
 	public static final String RED_BRIGHT = "\033[0;91m";    // RED
     public static final String GREEN_BRIGHT = "\033[0;92m";  // GREEN
     public static final String YELLOW_BRIGHT = "\033[0;93m"; // YELLOW
-	
-
+    
+    private static File log = null;
+    private static BufferedWriter writer;
+    
+    
     /**
      * Enum info:
      * 
@@ -47,14 +62,102 @@ public class Logger {
 
 	public static void log(Level level, String message) {
 		Date date = Calendar.getInstance().getTime();
+	
+		if (!generateLog(PATH)) {
+			System.out.println(date + RED_BRIGHT + " [" + Level.FATAL.toString() + "] unable to create directory or file needed to store logs. Logs will NOT be saved!" + RESET);
+		}
 		
+		String m = null;
 		switch (level) {
-			case CHAT -> System.out.println(date + PURPLE + " [" + level.toString() + "] " + message + RESET);
-			case SUCCESS -> System.out.println(date + GREEN_BRIGHT + " [" + level.toString() + "] " + message + RESET);
-			case DEBUG, INFO -> System.out.println(date + WHITE_BRIGHT + " [" + level.toString() + "] " + message + RESET);
-			case WARN, ERROR -> System.out.println(date + YELLOW_BRIGHT + " [" + level.toString() + "] " + message + RESET);
-			case FATAL -> System.out.println(date + RED_BRIGHT + " [" + level.toString() + "] " + message + RESET);
-			default -> throw new IllegalArgumentException("Unexpected value: " + level);
+			case CHAT -> {
+				m = date + PURPLE + " [" + level.toString() + "] " + message + RESET;
+				System.out.println(m);
+				m = date +  " [" + level.toString() + "] " + message;
+				writeToLog(m);
+			}
+			case SUCCESS -> {
+				m = date + GREEN_BRIGHT + " [" + level.toString() + "] " + message + RESET;
+				System.out.println(m);
+				m = date + " [" + level.toString() + "] " + message;
+				writeToLog(m);
+			}
+			case DEBUG, INFO -> {
+				m = date + WHITE_BRIGHT + " [" + level.toString() + "] " + message + RESET;
+				System.out.println(m);
+				m = date + " [" + level.toString() + "] " + message;
+				writeToLog(m);
+			}
+			case WARN, ERROR -> {
+				m = date + YELLOW_BRIGHT + " [" + level.toString() + "] " + message + RESET;
+				System.out.println(m);
+				m = date + " [" + level.toString() + "] " + message;
+				writeToLog(m);
+			}
+			case FATAL -> {
+				m = date + RED_BRIGHT + " [" + level.toString() + "] " + message + RESET;
+				System.out.println(m);
+				m = date + " [" + level.toString() + "] " + message;
+				writeToLog(m);
+			}
+			default -> {
+				log(Level.FATAL, "Unexpected Level value: " + level);
+			}
+		}
+		
+	}
+	
+	private static boolean generateLog(String path) {
+		if (log != null) {
+			return true;
+		}
+		
+		File dir = new File(path);
+		if (!dir.mkdirs() && !dir.exists()) {
+			return false;
+		}
+		
+		log = new File(path, Instant.now().toString().replaceAll("[:]", "-") + ".txt");
+		log(Level.INFO, "Logs being stored at " + log.getPath());
+		
+		try {
+			log.createNewFile();
+			writer = new BufferedWriter(new FileWriter(log));
+			
+		} catch (IOException e) {
+			log(Level.FATAL, "IOException occurred when trying to create log file.");
+			log(Level.FATAL, e.toString());
+			
+			return false;
+		}
+		
+		addShutdownHook();
+		return true;
+	}
+	
+	private static void addShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(new Thread( () -> {
+			try {
+				log(Level.WARN, "Logger shutdown hook started...");
+				writer.close();
+			} catch (IOException e) {
+				log(Level.FATAL, "Logger shutdown hook failed to close writer.");
+				log(Level.FATAL, e.toString());
+			}
+		}));
+	}
+	
+	public static void writeToLog(String string) {
+		if (writer == null) {
+			return;
+		}
+		
+		try {
+			writer.append(string + "\n");
+			writer.flush();
+			
+		} catch (IOException e) {
+			log(Level.FATAL, "IOException occurred when trying to write to the log file.");
+			log(Level.FATAL, log.toString());
 		}
 	}
 }

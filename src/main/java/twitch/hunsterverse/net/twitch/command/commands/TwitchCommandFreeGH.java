@@ -1,12 +1,15 @@
 package twitch.hunsterverse.net.twitch.command.commands;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import twitch.hunsterverse.net.twitch.TwitchBot;
 import twitch.hunsterverse.net.twitch.command.TwitchCommand;
 import twitch.hunsterverse.net.twitch.command.TwitchCommandEvent;
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
@@ -23,32 +26,34 @@ public class TwitchCommandFreeGH extends TwitchCommand {
 		long result = System.currentTimeMillis();
 		
 		try {
-			Document doc = Jsoup.connect("https://hunstermonter.net/new_gh_getter.php").get();
+			Document doc = Jsoup.connect("https://api.hunsterverse.net/v1/halls/MH/freegh")
+					.ignoreContentType(true)
+					.header("Authorization", "HV " + TwitchBot.configuration.getApi().get("hunsterverse_api_key")).get();
 			
-			String reply = "| ";
-						
-			Elements ghubs = doc.select("div.EntireGame");
-			for (Element el: ghubs) {
-				//Game name
-				Element games = el.selectFirst("div.GameName");
-				//First empty hub
-				Element ghub = el.selectFirst("div.emptyGHClass");
-				//tag holding the number
-				Element num = ghub.selectFirst("b");
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode payloadNode = mapper.readTree(doc.text()).get("payload");
+			
+			String reply = "\n ";
+			
+			Iterator<String> it = payloadNode.fieldNames();
+			while (it.hasNext()) {
+				String game = it.next();
+				JsonNode node = payloadNode.get(game);
 				
-				String game = "";
-				if (games.text().contains("(")) {
-					game = games.text().substring(0, games.text().indexOf("(")).stripTrailing();
-				} else {
-					game = games.text().stripTrailing();
+				if (node.isContainerNode()) {
+					reply += String.format("%s: [A: %s B: %s C: %s] \n ",
+							game, node.get("A").asText(), node.get("B").asText(), node.get("C").asText());
 				}
 				
-				reply += game + ": " + num.text() + " | ";
+				if (!node.isContainerNode() && node.isTextual()) {
+					reply += String.format("%s: %s",
+							game, node.asText());
+				}
 			}
 			
 			result = System.currentTimeMillis() - result;
 			
-			TwitchAPI.sendMessage(event, reply + result + "ms");
+			TwitchAPI.sendMessage(event, reply + " | " + result + "ms");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

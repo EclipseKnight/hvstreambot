@@ -81,7 +81,7 @@ public class DiscordBot {
 	/**
 	 * executor for tasks.
 	 */
-	private final static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+	private final static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 	
 	public static StreamerMetricsTask metricsTask = new StreamerMetricsTask();
 	
@@ -151,7 +151,7 @@ public class DiscordBot {
 		//15min
 		DiscordBot.executor.submit(new UpdateLiveEmbedsTask(900000));
 				
-		DiscordBot.executor.submit(metricsTask);
+//		DiscordBot.executor.submit(metricsTask);
 	}
 
 	private void startActiveStreamEmbed() {

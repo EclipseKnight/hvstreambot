@@ -32,7 +32,7 @@ public class DiscordCommandSubscribe extends Command {
 		
 		String[] args = CommandUtils.splitArgs(event.getArgs());
 		
-		if (event.getArgs().isEmpty()) {
+		if (event.getArgs().isBlank()) {
 			DiscordUtils.sendTimedMessage(event,
 					DiscordUtils.createShortEmbed("Invalid Arguments",
 							DiscordBot.PREFIX + "subscribe <@discorduser or discordID>",

@@ -50,9 +50,8 @@ public class StreamerMetricsTask implements Runnable {
 				unprocessedTime -= rate;
 			}
 			
-			
 			try {
-				Thread.sleep(30000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				Logger.log(Level.WARN, Thread.currentThread().getName() + " was interrupted while sleeping.\n Exiting loop.");
 				run = false;

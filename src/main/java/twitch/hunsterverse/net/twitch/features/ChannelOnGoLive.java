@@ -38,30 +38,35 @@ public class ChannelOnGoLive {
 		//Log event.
 		Logger.log(Level.INFO, stream.getUserName() + " is now live.");
 		
-		EmbedBuilder eb = new EmbedBuilder();
-		eb.setDescription("<a:livesmall:848591733658615858> **" + stream.getUserName() + "** is now `live`.");
-		eb.setTimestamp(Instant.now());
-		eb.setFooter("Go Live");
-		eb.setColor(DiscordBot.COLOR_SUCCESS);
-		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), eb.build());
-		
 		// Set user to streaming.
 		HVStreamer s = CommandUtils.getStreamerWithTwitchChannel(channel.getName());
-		s.setTimeStreamed(s.getTimeStreamed() - DiscordBot.metricsTask.getUnprocessedTime());
+//		s.setTimeStreamed(s.getTimeStreamed() - DiscordBot.metricsTask.getUnprocessedTime());
 		s.setStreaming(true);
 		JsonDB.database.upsert(s);
+		
+		HVStreamerConfig config = CommandUtils.getStreamerConfigWithDiscordId(s.getDiscordId());
+		//Check if the game played passes the filter set (is contained in the filter list).
+		Boolean passFilter = "all_games".equals(config.getSelectedFilter()) || config.getGameFilters().get(config.getSelectedFilter()).contains(stream.getGameName());
+		
+		//Log to channel for troubleshooting. 
+		EmbedBuilder eb = new EmbedBuilder();
+		eb.setDescription("<a:livesmall:848591733658615858> **" + stream.getUserName() + "** is now `live`.\n"
+				+ "Game: " + stream.getGameName() + "\n"
+				+ "Filter: " + config.getSelectedFilter() + "\n"
+				+ "Pass Filter?: " + passFilter)
+			.setTimestamp(Instant.now())
+			.setFooter("Go Live")
+			.setColor(DiscordBot.COLOR_SUCCESS);
+		DiscordUtils.sendMessage(DiscordBot.configuration.getDatabase().get("backup_log_channel"), eb.build());
+		
+		
+		//If a new streamer went live then highlight channel.
+		Logger.log(Level.INFO, passFilter + ":" + !(pres != null && pres));
 		
 		// Update bot streamer count.
 		DiscordUtils.setBotStatus((TwitchUtils.getLiveFilteredChannels().size()) + " streamer(s)");
 		
-		HVStreamerConfig config = CommandUtils.getStreamerConfigWithDiscordId(s.getDiscordId());
-		
-		
-		//If a new streamer went live then highlight channel.
-		System.out.println(("all_games".equals(config.getSelectedFilter()) || config.getGameFilters().get(config.getSelectedFilter()).contains(stream.getGameName())) + ":" + !(pres != null && pres));
-		
-		if ("all_games".equals(config.getSelectedFilter()) || config.getGameFilters().get(config.getSelectedFilter()).contains(stream.getGameName()) && !(pres != null && pres)) {
-
+		if (passFilter && !(pres != null && pres)) {
 			DiscordUtils.updateLiveEmbeds(false);
 			
 			//Notify subscribers. 
