@@ -65,8 +65,7 @@ public class DiscordUtils {
 	 */
 	public static void updateLiveEmbeds(boolean force) {
 		
-		
-		Logger.log(Level.WARN, "Updating embeds...");
+		Logger.log(Level.SUCCESS, "[1/8] Initializing Embed Update...");
 		long start = System.currentTimeMillis();
 		long result = -1;
 		String guildId = DiscordBot.configuration.getGuildId();
@@ -77,49 +76,59 @@ public class DiscordUtils {
 		
 		boolean newLiveStreamer = false;
 		
-		//If force flag is false, perform regular checks.
-		if (!force) {
-			
-			//if there is a cached list.
-			if (recentLiveChannels != null) {
-				Collections.sort(recentLiveChannels);
-				Collections.sort(liveChannels);
-				
-				//if lists aren't matching...
-				if (!recentLiveChannels.equals(liveChannels)) {
-					
-					//check if old list is smaller than new list, indicating a new streamer is live.
-					if (recentLiveChannels.size() < liveChannels.size()) {
-						newLiveStreamer = true;
-					}
-					
-					recentLiveChannels.clear();
-					recentLiveChannels.addAll(liveChannels);
-					Logger.log(Level.WARN, "New streamer is live!" + result);
-					
-				} else {
-					result = System.currentTimeMillis() - start;
-					Logger.log(Level.WARN, "No change in live channels. Skipping update. Time taken (MS): " + result);
-					
-					return;
-				}
-				
-			} else {
-				recentLiveChannels = new ArrayList<String>();
-				recentLiveChannels.addAll(liveChannels);
-				newLiveStreamer = true;
-			}
-		}
-		
+		Logger.log(Level.DEBUG, "[2/8] Checking if channels are live.");
+		// No live channels, skip update or continue if forced.
 		if (liveChannels.size() <= 0) {
 			Logger.log(Level.INFO, "No live channels.");
 			
-			if (!force) return;
-			Logger.log(Level.WARN, "flag set to force. Forcing update...");
+			if (!force) {
+				result = System.currentTimeMillis() - start;
+				Logger.log(Level.WARN, "Skipping update. Time taken (MS): " + result);
+				
+				return;
+			}
+				
+			Logger.log(Level.WARN, "Flag set to force. Forcing update...");
+		}
+		
+		Logger.log(Level.DEBUG, "[3/8] Checking if new streamer is live...");
+		//Check whether to highlight channel if new streamer is live. 
+		//if there is a cached list.
+		if (recentLiveChannels != null) {
+			Collections.sort(recentLiveChannels);
+			Collections.sort(liveChannels);
+			
+			//if lists aren't matching...
+			if (!recentLiveChannels.equals(liveChannels)) {
+				
+				//check if old list is smaller than new list, indicating a new streamer is live.
+				if (recentLiveChannels.size() < liveChannels.size()) {
+					newLiveStreamer = true;
+				}
+				
+				recentLiveChannels.clear();
+				recentLiveChannels.addAll(liveChannels);
+				Logger.log(Level.WARN, "New streamer is live!" + result);
+				
+			//If lists are matching, then no change in live channels.
+			} else if (!force) {
+				result = System.currentTimeMillis() - start;
+				Logger.log(Level.WARN, "No change in live channels. Skipping update. Time taken (MS): " + result);
+				
+				return;
+			//If flag set to force, then update the embed regardless.	
+			} else {
+				Logger.log(Level.WARN, "No change in live channels. Flag set to force. Continuing update...");
+			}
+			
+		} else {
+			recentLiveChannels = new ArrayList<String>();
+			recentLiveChannels.addAll(liveChannels);
+			newLiveStreamer = true;
 		}
 		
 		
-		
+		Logger.log(Level.DEBUG, "[4/8] Adjusting embeds to meet needed quantity...");
 		//Code to update the embeds begins here.
 		int fieldCount = liveChannels.size();
 		int numOfEmbeds = (int) Math.ceil(fieldCount / 25.0);
@@ -133,7 +142,7 @@ public class DiscordUtils {
 			
 			//If too few, increase until == to the needed amount
 			if (numOfEmbeds > aes.size()) {
-				Logger.log(Level.DEBUG, "Too few active embeds ("+aes.size()+"), creating more...");
+				Logger.log(Level.INFO, "Too few active embeds ("+aes.size()+"), creating more...");
 				
 				while (aes.size() < numOfEmbeds) {
 					createLiveEmbed();
@@ -144,7 +153,7 @@ public class DiscordUtils {
 			
 			//If too many, reduce until == to the needed amount
 			if (numOfEmbeds < aes.size()) {
-				Logger.log(Level.DEBUG, "Too many active embeds ("+aes.size()+"), reducing amount...");
+				Logger.log(Level.INFO, "Too many active embeds ("+aes.size()+"), reducing amount...");
 
 				while (aes.size() > numOfEmbeds) {
 					DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).deleteMessageById(aes.get(aes.size()-1).getMessageId()).queue();
@@ -154,8 +163,10 @@ public class DiscordUtils {
 				}
 			}
 		}
-		Logger.log(Level.SUCCESS, "Adjusted current active embeds to meet the needed ammount (needed:storedindatabse) ("+numOfEmbeds +":"+aes.size() +").");
+		Logger.log(Level.SUCCESS, "Adjusted current active embeds to meet the needed quantity (needed:storedindatabse) ("+numOfEmbeds +":"+aes.size() +").");
 		
+		
+		Logger.log(Level.DEBUG, "[5/8] Checking if the embed messages still exist...");
 		//Check each active embed to see if the message still exists. 
 		for (ActiveEmbed ae: aes) {
 			Message m = null;
@@ -177,6 +188,8 @@ public class DiscordUtils {
 			}
 		}
 		
+		
+		Logger.log(Level.DEBUG, "[6/8] Updating the embeds...");
 		//Update loop
 		List<MessageEmbed> updatedEmbeds = new ArrayList<MessageEmbed>();
 		int remainFields = fieldCount;
@@ -184,6 +197,7 @@ public class DiscordUtils {
 		int channelIndex = 0;
 		//loop through embeds until populated with needed fields/streamers
 		while (activeEmbedIndex < numOfEmbeds) {
+			Logger.log(Level.INFO, "Updating embed " + activeEmbedIndex);
 			
 			ActiveEmbed ae = aes.get(activeEmbedIndex);
 			
@@ -218,10 +232,12 @@ public class DiscordUtils {
 			if (liveChannels.size() <= 0) {
 				eb.setTitle("[" + (activeEmbedIndex+1) + "/" + numOfEmbeds + "] Live Hunsterverse Streamers (" + liveChannels.size() + " live)");
 			}
+			eb.setFooter("Bot created by Eclipse. " + DiscordBot.VERSION);
+			
+			
 			updatedEmbeds.add(eb.build());
 			remainFields -= i;
 			activeEmbedIndex++;
-			Logger.log(Level.INFO, "Updating embed " + activeEmbedIndex);
 		}
 		
 		//loop through current embed messages and edit/replace them with newly embed instances.
@@ -234,13 +250,14 @@ public class DiscordUtils {
 		
 		//If a new streamer went live then highlight channel.
 		if (newLiveStreamer) {
+			Logger.log(Level.DEBUG, "[7/8] New streamer went live. Highlighting the channel...");
 			DiscordBot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("<:pepegaslam:595804056941887489>").queue((m) -> {
 				m.delete().queue();
 			});
 		}
 		
 		result = System.currentTimeMillis() - start;
-		Logger.log(Level.SUCCESS, "Finished updating embeds... Time taken (MS): " + result + "\n");
+		Logger.log(Level.SUCCESS, "[8/8] Finished updating embeds... Time taken (MS): " + result + "\n");
 		DiscordUtils.setBotStatus(liveChannels.size() + " streamer(s)");
 	}
 	

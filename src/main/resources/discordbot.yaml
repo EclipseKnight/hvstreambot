@@ -28,6 +28,9 @@ database:
     # How frequently the database is backed up. Unit x many Hours.
     backup_interval: 2
     
+    # Max number of backups stored. If number of backups exceeds this integer, the oldest backup will get deleted. 
+    backup_quantity: 12
+    
     # Path to store database backups. Left empty = Default path is within the generated folder.     
     backup_path: 
     

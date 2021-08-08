@@ -19,16 +19,17 @@ public class Launcher {
 		AnsiConsole.systemInstall();
 				
 		// initialize the database
-		JsonDB.init();
 		Logger.log(Level.INFO, "Database initialized...");
+		JsonDB.init();
 		
+		Logger.log(Level.INFO, "Twitch Bot initialized...");
 		twitchBot = new TwitchBot();
 		twitchBot.registerFeatures();
 		twitchBot.start();
-		Logger.log(Level.INFO, "Twitch Bot initialized...");
 		
-		discordBot = new DiscordBot();
 		Logger.log(Level.INFO, "Discord Bot initialized...");
+		discordBot = new DiscordBot();
+		
 		
 		// initialize scheduled backups after discord bot creation. 
 		// This utilizes the discord bot configuration file instead of a separate config.

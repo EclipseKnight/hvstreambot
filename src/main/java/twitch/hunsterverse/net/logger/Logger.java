@@ -100,7 +100,7 @@ public class Logger {
 				writeToLog(m);
 			}
 			default -> {
-				log(Level.FATAL, "Unexpected Level value: " + level);
+				log(Level.ERROR, "Unexpected Level value: " + level);
 			}
 		}
 		
@@ -124,26 +124,41 @@ public class Logger {
 			writer = new BufferedWriter(new FileWriter(log));
 			
 		} catch (IOException e) {
-			log(Level.FATAL, "IOException occurred when trying to create log file.");
-			log(Level.FATAL, e.toString());
+			log(Level.ERROR, "IOException occurred when trying to create log file.");
+			log(Level.ERROR, e.toString());
 			
 			return false;
 		}
 		
+		deleteOldestLog(dir);
 		addShutdownHook();
 		return true;
 	}
 	
-	private static void addShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread( () -> {
-			try {
-				log(Level.WARN, "Logger shutdown hook started...");
-				writer.close();
-			} catch (IOException e) {
-				log(Level.FATAL, "Logger shutdown hook failed to close writer.");
-				log(Level.FATAL, e.toString());
-			}
-		}));
+
+	/**
+	 * Deletes the oldest log passed the max stored value of logs. 
+	 * @param dir file directory
+	 */
+	private static void deleteOldestLog(File dir) {
+ 		File[] logFiles = dir.listFiles();
+ 		long oldestDate = Long.MAX_VALUE;
+ 		File oldestFile = null;
+ 		
+ 		//delete the oldest log if there are more than 15.
+ 		if (logFiles != null && logFiles.length > 5) {
+ 			
+ 			for (File f: logFiles) {
+ 				if (f.lastModified() < oldestDate) {
+ 					oldestDate = f.lastModified();
+ 					oldestFile = f;
+ 				}
+ 			}
+ 		}
+ 		
+ 		if (oldestFile != null) {
+ 			oldestFile.delete();
+ 		}
 	}
 	
 	public static void writeToLog(String string) {
@@ -156,8 +171,21 @@ public class Logger {
 			writer.flush();
 			
 		} catch (IOException e) {
-			log(Level.FATAL, "IOException occurred when trying to write to the log file.");
-			log(Level.FATAL, log.toString());
+			log(Level.ERROR, "IOException occurred when trying to write to the log file.");
+			log(Level.ERROR, log.toString());
 		}
+	}
+	
+	private static void addShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(new Thread( () -> {
+			try {
+				log(Level.WARN, "Logger shutdown hook started...");
+				writer.close();
+			} catch (IOException e) {
+				log(Level.ERROR, "Logger shutdown hook failed to close writer.");
+				log(Level.ERROR, e.toString());
+			}
+			
+		}));
 	}
 }

@@ -8,8 +8,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
-
 import com.fasterxml.uuid.EthernetAddress;
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
@@ -17,6 +15,7 @@ import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import io.jsondb.JsonDBTemplate;
 import io.jsondb.events.CollectionFileChangeListener;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.lingala.zip4j.ZipFile;
 import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.database.documents.ActiveEmbed;
 import twitch.hunsterverse.net.database.documents.HVStreamer;
@@ -104,8 +103,14 @@ public class JsonDB {
 			path = Launcher.uwd  + File.separator + "hvstreambot" + File.separator + "backups";
 		}
 		
+		File backupDir = new File(path);
+		if (!backupDir.exists() && !backupDir.mkdirs()) {
+			Logger.log(Level.FATAL, "Backup directory does not exist and could not be created. Backups are not being created.");
+			return;
+		}
+		
 		Logger.log(Level.WARN, "Backups are enabled. Interval: "+ interval + " hours");
-		Logger.log(Level.WARN, "Backups are being stored at" + path);
+		Logger.log(Level.WARN, "Backups are being stored at " + path);
 		
 		JsonDB.scheduler.scheduleAtFixedRate(new Runnable() {
 
@@ -124,15 +129,15 @@ public class JsonDB {
 		String logChannel = DiscordBot.configuration.getDatabase().get("backup_log_channel");
 		
 		if (destPath == null) {
-			destPath = Launcher.uwd  + File.separator + "hvstreambot" + File.separator + "backups";
+			destPath = Launcher.uwd + File.separator + "hvstreambot" + File.separator + "backups";
 		}
 		
 		// output to discord if channel available. 
 		if (logChannel != null) {
-			EmbedBuilder eb = new EmbedBuilder();
-			eb.setTitle("Backing up database...");
-			eb.setTimestamp(Instant.now());
-			eb.setColor(DiscordBot.COLOR_FAILURE);
+			EmbedBuilder eb = new EmbedBuilder()
+					.setTitle("Backing up database...")
+					.setTimestamp(Instant.now())
+					.setColor(DiscordBot.COLOR_FAILURE);
 			DiscordUtils.sendMessage(logChannel, eb.build());
 		}
 		Logger.log(Level.WARN, "Backing up database...");
@@ -143,26 +148,72 @@ public class JsonDB {
 		File srcDir = new File(srcPath);
 		File destDir = new File(destPath);
 		
+		
+		//Zip the database folder up and put it in the backups folder.
+		ZipFile zipFile = null;
+		String zipFilePath = destDir.getAbsolutePath() + File.separator + Instant.now().toString().replaceAll("[:]", "-") + ".zip";
 		try {
-			FileUtils.copyDirectory(srcDir, destDir);
+			zipFile = new ZipFile(zipFilePath);
+			zipFile.addFolder(srcDir);
+			
 		} catch (IOException e) {
-			e.printStackTrace();
-		}	
+			Logger.log(Level.ERROR, "IOException when trying to create backup zip file.");
+			Logger.log(Level.ERROR, e.toString());
+			
+		} finally {
+			try {
+				zipFile.close();
+			} catch (IOException e) {
+				Logger.log(Level.ERROR, "IOException when trying to close zip stream.");
+				Logger.log(Level.ERROR, e.toString());
+			}
+		}
 		
 		long result = System.currentTimeMillis() - start;
 		
+		File finalZip = new File(zipFilePath);
+		
 		// output to discord if channel available. 
 		if (logChannel != null) {
-			EmbedBuilder eb = new EmbedBuilder();
-			eb.setTitle("Backup completed!");
-			eb.appendDescription("Time taken: " + result + "ms");
-			eb.setFooter("Backup size: " + folderSize(destDir));
-			eb.setTimestamp(Instant.now());
-			eb.setColor(DiscordBot.COLOR_SUCCESS);
+			EmbedBuilder eb = new EmbedBuilder()
+					.setTitle("Backup completed!")
+					.appendDescription("Time taken: " + result + "ms")
+					.setFooter("Backup size: " + humanReadableByteCount(finalZip.length(), false))
+					.setTimestamp(Instant.now())
+					.setColor(DiscordBot.COLOR_SUCCESS);
 			DiscordUtils.sendMessage(logChannel, eb.build());
 		}
 		Logger.log(Level.SUCCESS, "Backup completed. Time taken (MS): " + result);
+		
+		deleteOldestBackup(destDir);
 	}
+	
+	/**
+	 * Deletes the oldest log passed the max stored value of logs. 
+	 * @param dir file directory
+	 */
+	private static void deleteOldestBackup(File dir) {
+ 		File[] backupFiles = dir.listFiles();
+ 		long oldestDate = Long.MAX_VALUE;
+ 		File oldestFile = null;
+ 		
+ 		//delete the oldest log if there are more than backup_quantity.
+ 		if (backupFiles != null && backupFiles.length > Integer.valueOf(DiscordBot.configuration.getDatabase().get("backup_quantity"))) {
+ 			
+ 			for (File f: backupFiles) {
+ 				if (f.lastModified() < oldestDate) {
+ 					oldestDate = f.lastModified();
+ 					oldestFile = f;
+ 				}
+ 			}
+ 		}
+ 		
+ 		if (oldestFile != null) {
+ 			oldestFile.delete();
+ 		}
+	}
+	
+	
 	
 	public static String folderSize(File directory) {
 		long size = -1;
