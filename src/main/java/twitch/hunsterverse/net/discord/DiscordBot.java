@@ -23,6 +23,7 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import twitch.hunsterverse.net.Launcher;
 import twitch.hunsterverse.net.database.JsonDB;
 import twitch.hunsterverse.net.database.documents.ActiveEmbed;
@@ -72,11 +73,6 @@ public class DiscordBot {
 	 */
 	private CommandClientBuilder builder;
 	
-	/**
-	 * intents of the discord bot
-	 */
-	private ArrayList<GatewayIntent> intents = new ArrayList<>();
-	
 	
 	/**
 	 * executor for tasks.
@@ -89,22 +85,33 @@ public class DiscordBot {
 		// Load Configuration
 		loadConfiguration();
 		
-		 if (configuration.getApi().get("discord_client_id") == null 
-	        		|| configuration.getApi().get("discord_client_token") == null
-	        		|| configuration.getOwnerId() == null) {
-	        	Logger.log(Level.FATAL, "Discord id or token or owner id is not set. Check the discordbot.yaml keys: discord_client_id, discord_client_token, and owner_id values.");
-	        	Logger.log(Level.FATAL, "Exiting...");
-	        	System.exit(1);
-	        }
-		
-		
-		for (GatewayIntent gt : GatewayIntent.values()) {
-			intents.add(0, gt);
-		}
+		if (configuration.getApi().get("discord_client_id") == null 
+        		|| configuration.getApi().get("discord_client_token") == null
+        		|| configuration.getOwnerId() == null) {
+        	Logger.log(Level.FATAL, "Discord id or token or owner id is not set. Check the discordbot.yaml keys: discord_client_id, discord_client_token, and owner_id values.");
+        	Logger.log(Level.FATAL, "Exiting...");
+        	System.exit(1);
+        } 
 		
 		
 		try {
-			jda = JDABuilder.create(configuration.getApi().get("discord_client_token"), intents).build().awaitReady();
+			jda = JDABuilder.create
+					(
+							configuration.getApi().get("discord_client_token"), 
+							
+							GatewayIntent.DIRECT_MESSAGES,
+							GatewayIntent.DIRECT_MESSAGE_REACTIONS,
+							
+							GatewayIntent.GUILD_MESSAGES,
+							GatewayIntent.GUILD_MESSAGE_TYPING,
+							GatewayIntent.GUILD_EMOJIS,
+							GatewayIntent.GUILD_MEMBERS,
+							
+							GatewayIntent.GUILD_VOICE_STATES
+					)
+					.disableCache(CacheFlag.ACTIVITY)
+					.build()
+					.awaitReady();
 		} catch (LoginException | InterruptedException e) {
 			System.out.println("Discord bot failed to initialize: " + e.toString());
 			return;
@@ -194,21 +201,22 @@ public class DiscordBot {
      * Load the Configuration
      */
     public static void loadConfiguration() {
-    	File twitchBotConfig = new File(Launcher.uwd + File.separator + "hvstreambot" + File.separator + "configs" + File.separator + "discordbot.yaml");
+    	File discordBotConfig = new File(Launcher.uwd + File.separator + "hvstreambot" + File.separator + "configs" + File.separator + "discordbot.yaml");
     	
     	if (new File(Launcher.uwd + File.separator + "hvstreambot" + File.separator + "configs").mkdirs()) {
     		Logger.log(Level.WARN, "Generating configs directory...");
     	}
     	
     	try {
-    		if (!twitchBotConfig.exists()) {
+    		if (!discordBotConfig.exists()) {
         		generateConfig();
         	}
         	
-            InputStream is = new BufferedInputStream(new FileInputStream(twitchBotConfig));
+            InputStream is = new BufferedInputStream(new FileInputStream(discordBotConfig));
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             configuration = mapper.readValue(is, DiscordConfiguration.class);
             
+            is.close();
         } catch (Exception ex) {
             ex.printStackTrace();
             Logger.log(Level.FATAL, "Unable to load configuration... Exiting.");
@@ -220,7 +228,7 @@ public class DiscordBot {
     /**
      * Generates config file.
      */
-    public static void generateConfig() {   	
+    private static void generateConfig() {   	
     	
         try {
         	Logger.log(Level.WARN, "Missing discordbot.yaml. Generating new config...");
@@ -232,7 +240,7 @@ public class DiscordBot {
           
             Logger.log(Level.WARN, "Generating config at " + copy);
             Files.copy(original, copy);
-            
+            original.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			Logger.log(Level.ERROR, "Failed to generate discordbot.yaml...");

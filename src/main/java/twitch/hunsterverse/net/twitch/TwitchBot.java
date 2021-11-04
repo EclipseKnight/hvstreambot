@@ -147,6 +147,7 @@ public class TwitchBot {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             configuration = mapper.readValue(is, TwitchConfiguration.class);
             
+            is.close();
         } catch (Exception ex) {
             ex.printStackTrace();
             Logger.log(Level.FATAL, "Unable to load configuration... Exiting.");
@@ -170,7 +171,7 @@ public class TwitchBot {
           
             Logger.log(Level.WARN, "Generating config at " + copy);
             Files.copy(original, copy);
-            
+            original.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			Logger.log(Level.ERROR, "Failed to generate twitchbot.yaml...");
