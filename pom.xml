@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>com.github.twitch4j</groupId>
 			<artifactId>twitch4j</artifactId>
-			<version>1.4.0</version>
+			<version>1.7.0</version>
 		</dependency>
 
 		<dependency>

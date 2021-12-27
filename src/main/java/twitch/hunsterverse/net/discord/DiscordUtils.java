@@ -163,7 +163,7 @@ public class DiscordUtils {
 				}
 			}
 		}
-		Logger.log(Level.SUCCESS, "Adjusted current active embeds to meet the needed quantity (needed:storedindatabse) ("+numOfEmbeds +":"+aes.size() +").");
+		Logger.log(Level.SUCCESS, "Adjusted current active embeds to meet the needed quantity (needed:storedindatabase) ("+numOfEmbeds +":"+aes.size() +").");
 		
 		
 		Logger.log(Level.DEBUG, "[5/8] Checking if the embed messages still exist...");
