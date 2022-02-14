@@ -28,7 +28,7 @@ import twitch.hunsterverse.net.logger.Logger.Level;
 
 public class JsonDB {
 
-	public static String dbFilesLocation = Launcher.uwd  + File.separator + "hvstreambot" + File.separator + "database";
+	public static String dbFilesLocation = Launcher.uwd + File.separator + "hvstreambot" + File.separator + "database";
 	private static String baseScanPackage = "twitch.hunsterverse.net.database.documents";
 	public static JsonDBTemplate database;
 	
