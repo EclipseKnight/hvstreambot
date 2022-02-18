@@ -54,6 +54,7 @@ public class DiscordCommandUnlink extends Command {
 			eb.setTitle("Successfully Unlinked!");
 			eb.addField("User:", "<@"+discordId+">", true);
 			eb.addField("Twitch Channel:", s.getTwitchChannel(), true);
+			eb.addField("Youtube Channel:", s.getYoutubeChannelId(), true);
 			eb.addField("HV Affiliate:", s.isAffiliate() + "", true);
 			eb.addField("Linked:", s.isLinked() + "", true);
 			eb.setColor(DiscordBot.COLOR_STREAMER);

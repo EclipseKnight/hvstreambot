@@ -93,7 +93,7 @@ public class TwitchUtils {
 		List<String> channels = new ArrayList<>();
 		
 		for(HVStreamer s: JsonDB.database.getCollection(HVStreamer.class)) {
-			if (s.isLinked())
+			if (s.isLinked() && !"null".equalsIgnoreCase(s.getTwitchChannel()))
 				channels.add(s.getTwitchChannel());
 		}
 		
@@ -109,7 +109,9 @@ public class TwitchUtils {
 		
 		for(HVStreamer s: JsonDB.database.getCollection(HVStreamer.class)) {
 			
-			if (s.isLinked() && TwitchAPI.isLive(s.getTwitchChannel()))
+			if (s.isLinked() 
+					&& !"null".equalsIgnoreCase(s.getTwitchChannel()) 
+					&& TwitchAPI.isLive(s.getTwitchChannel()))
 				channels.add(s.getTwitchChannel());
 		}
 		
@@ -134,7 +136,9 @@ public class TwitchUtils {
 				JsonDB.database.upsert(config);
 			}
 			
-			if (s.isLinked() && TwitchAPI.isLive(s.getTwitchChannel())) {
+			if (s.isLinked() && 
+					!"null".equalsIgnoreCase(s.getTwitchChannel()) 
+					&& TwitchAPI.isLive(s.getTwitchChannel())) {
 				
 				Stream stream = null;
 				int pass = 0;

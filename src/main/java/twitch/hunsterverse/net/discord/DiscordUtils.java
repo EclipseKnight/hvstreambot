@@ -3,9 +3,10 @@ package twitch.hunsterverse.net.discord;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.github.twitch4j.helix.domain.Stream;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -27,8 +28,11 @@ import twitch.hunsterverse.net.database.documents.HVUser;
 import twitch.hunsterverse.net.discord.commands.CommandUtils;
 import twitch.hunsterverse.net.logger.Logger;
 import twitch.hunsterverse.net.logger.Logger.Level;
+import twitch.hunsterverse.net.streamapi.StreamUtils;
 import twitch.hunsterverse.net.twitch.TwitchUtils;
 import twitch.hunsterverse.net.twitch.features.TwitchAPI;
+import twitch.hunsterverse.net.youtube.YTChannel;
+import twitch.hunsterverse.net.youtube.YoutubeAPI;
 
 public class DiscordUtils {
 	
@@ -57,7 +61,7 @@ public class DiscordUtils {
 	}
 	
 	//cached recent list for updateLiveEmbeds
-	private static List<String> recentLiveChannels = null;
+	private static List<HVStreamer> recentLiveChannels = null;
 	
 	/**
 	 * Update the active embeds.
@@ -72,8 +76,10 @@ public class DiscordUtils {
 		String channelId = DiscordBot.configuration.getLiveEmbedChannel();
 		
 		List<ActiveEmbed> aes = JsonDB.database.getCollection(ActiveEmbed.class);
-		List<String> liveChannels = TwitchUtils.getLiveFilteredChannels();
+		List<HVStreamer> liveChannels = StreamUtils.getLiveStreamers();
 		
+		
+				
 		boolean newLiveStreamer = false;
 		
 		Logger.log(Level.DEBUG, "[2/8] Checking if channels are live.");
@@ -95,8 +101,15 @@ public class DiscordUtils {
 		//Check whether to highlight channel if new streamer is live. 
 		//if there is a cached list.
 		if (recentLiveChannels != null) {
-			Collections.sort(recentLiveChannels);
-			Collections.sort(liveChannels);
+			
+			
+			recentLiveChannels.stream()
+			.sorted(Comparator.comparing(HVStreamer::getDiscordId))
+			.collect(Collectors.toList());
+			liveChannels.stream()
+			.sorted(Comparator.comparing(HVStreamer::getDiscordId))
+			.collect(Collectors.toList());
+			
 			
 			//if lists aren't matching...
 			if (!recentLiveChannels.equals(liveChannels)) {
@@ -108,6 +121,7 @@ public class DiscordUtils {
 				
 				recentLiveChannels.clear();
 				recentLiveChannels.addAll(liveChannels);
+				
 				Logger.log(Level.WARN, "New streamer is live!" + result);
 				
 			//If lists are matching, then no change in live channels.
@@ -122,8 +136,9 @@ public class DiscordUtils {
 			}
 			
 		} else {
-			recentLiveChannels = new ArrayList<String>();
+			recentLiveChannels = new ArrayList<HVStreamer>();
 			recentLiveChannels.addAll(liveChannels);
+			
 			newLiveStreamer = true;
 		}
 		
@@ -214,15 +229,42 @@ public class DiscordUtils {
 			EmbedBuilder eb = new EmbedBuilder(m.getEmbeds().get(0));
 			eb.clearFields();
 			
-			//Loop through adding the needed fields up until 25 field embed limit or needed fields are reahed. C
+			//Loop through adding the needed fields up until 25 field embed limit or needed fields are reached. 
 			int i = 0;
 			while (i < 25 && i < remainFields) {
-				String ch = liveChannels.get(channelIndex);
-				Stream s = TwitchAPI.getTwitchStream(ch);
+				HVStreamer hv = liveChannels.get(channelIndex);
+				String twitchCh = null;
+				YTChannel youtubeCh = null;
+				String fieldText = "";
+				String fieldTitle = "";
+				if (hv.isLiveTwitch()) {
+					twitchCh = hv.getTwitchChannel();
+					Stream s = TwitchAPI.getTwitchStream(twitchCh);
+					String game = TwitchAPI.getGameName(s.getGameId());
+					
+					fieldText += " <:arrowquest:804000542678056980> Twitch: :video_game: " +game+ ": ["+s.getTitle()+"]("+TwitchUtils.getTwitchChannelUrl(twitchCh)+")\n";
+				}
 				
-				HVStreamer hv = CommandUtils.getStreamerWithTwitchChannel(ch);
-				String game = TwitchAPI.getGameName(s.getGameId());
-				eb.addField("<a:livesmall:848591733658615858> " + s.getUserName() + "[" + hv.getDiscordName() + "]", " <:arrowquest:804000542678056980> :video_game: " +game+": ["+s.getTitle()+"]("+TwitchUtils.getTwitchChannelUrl(ch)+")", false);
+				if (hv.isLiveYoutube()) {
+					youtubeCh = YoutubeAPI.getChannel(hv.getYoutubeChannelId());
+					
+					fieldText += " <:arrowquest:804000542678056980> Youtube: :video_game: ["+youtubeCh.getStreamTitle()+ "]("+ youtubeCh.getChannelUrl()+")";
+				}
+				
+				fieldTitle += "<a:livesmall:848591733658615858> " + hv.getDiscordName();
+				
+				if (hv.isLiveTwitch() && hv.isLiveYoutube()) {
+					fieldTitle += "[TTV:" + hv.getTwitchChannel() + ", YT:" + youtubeCh.getChannelName() + "]";
+				}
+				if (hv.isLiveTwitch() && !hv.isLiveYoutube()) {
+					fieldTitle += "[TTV:" + hv.getTwitchChannel() + "]";
+				}
+				if (hv.isLiveYoutube() && !hv.isLiveTwitch()) {
+					fieldTitle += "[YT:" + youtubeCh.getChannelName() + "]";
+				}
+						
+				
+				eb.addField(fieldTitle, fieldText, false);
 				eb.setTitle("[" + (activeEmbedIndex+1) + "/" + numOfEmbeds + "] Live Hunsterverse Streamers (" + liveChannels.size() + " live)");
 				
 				i++;
@@ -260,6 +302,7 @@ public class DiscordUtils {
 		Logger.log(Level.SUCCESS, "[8/8] Finished updating embeds... Time taken (MS): " + result + "\n");
 		DiscordUtils.setBotStatus(liveChannels.size() + " streamer(s)");
 	}
+	
 	
 	/**
 	 * Notifies all of the users in the streamers subscriber list unless user has muted notifications.

@@ -17,7 +17,7 @@ public class Launcher {
 	public static void main(String[] args) {
 		// allows ANSI escape sequences to format console output. For loggers. aka PRETTY COLORS
 		AnsiConsole.systemInstall();
-				
+		
 		// initialize the database
 		Logger.log(Level.INFO, "Database initialized...");
 		JsonDB.init();

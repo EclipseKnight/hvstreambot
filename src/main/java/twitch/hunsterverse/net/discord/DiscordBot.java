@@ -50,7 +50,7 @@ import twitch.hunsterverse.net.twitch.TwitchUtils;
 
 public class DiscordBot {
 
-	public static final String VERSION = "v1.3.2";
+	public static final String VERSION = "v1.3.3";
 	public static final String PREFIX = "!s ";
 	
 	public static final int COLOR_SUCCESS = 65395;
@@ -113,7 +113,7 @@ public class DiscordBot {
 					.build()
 					.awaitReady();
 		} catch (LoginException | InterruptedException e) {
-			System.out.println("Discord bot failed to initialize: " + e.toString());
+			Logger.log(Level.ERROR, "Discord bot failed to initialize: " + e.toString());
 			return;
 		}
 	
@@ -155,8 +155,8 @@ public class DiscordBot {
 			return;
 		}
 		
-		//15min
-		DiscordBot.executor.submit(new UpdateLiveEmbedsTask(900000));
+		//10min
+		DiscordBot.executor.submit(new UpdateLiveEmbedsTask(600000));
 				
 //		DiscordBot.executor.submit(metricsTask);
 	}

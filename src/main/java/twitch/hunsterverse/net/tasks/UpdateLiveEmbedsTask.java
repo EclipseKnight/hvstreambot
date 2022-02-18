@@ -43,7 +43,7 @@ public class UpdateLiveEmbedsTask implements Runnable {
 			}
 			
 			try {
-				Thread.sleep(60000);
+				Thread.sleep(30000);
 			} catch (InterruptedException e) {
 				Logger.log(Level.WARN, Thread.currentThread().getName() + " was interrupted while sleeping.\n Exiting loop.");
 				run = false;

@@ -13,11 +13,14 @@ public class HVStreamer {
 	private String discordId;
 	private String discordName;
 	private String twitchChannel;
+	private String youtubeChannelId;
 	
 	private boolean linked;
 	private boolean affiliate;
 	private boolean pingable;
 	private boolean streaming;
+	private boolean isLiveTwitch;
+	private boolean isLiveYoutube;
 	private long timeStreamed;
 	
 	// uuid:user discord id
@@ -46,6 +49,14 @@ public class HVStreamer {
 	
 	public void setTwitchChannel(String twitchChannel) {
 		this.twitchChannel = twitchChannel;
+	}
+	
+	public String getYoutubeChannelId() {
+		return youtubeChannelId;
+	}
+	
+	public void setYoutubeChannelId(String youtubeChannelId) {
+		this.youtubeChannelId = youtubeChannelId;
 	}
 	
 	public boolean isLinked() {
@@ -80,6 +91,22 @@ public class HVStreamer {
 		this.streaming = streaming;
 	}
 	
+	public boolean isLiveTwitch() {
+		return isLiveTwitch;
+	}
+
+	public void setLiveTwitch(boolean isLiveTwitch) {
+		this.isLiveTwitch = isLiveTwitch;
+	}
+
+	public boolean isLiveYoutube() {
+		return isLiveYoutube;
+	}
+
+	public void setLiveYoutube(boolean isLiveYoutube) {
+		this.isLiveYoutube = isLiveYoutube;
+	}
+
 	public Map<String, String> getSubscribers() {
 		return subscribers;
 	}
